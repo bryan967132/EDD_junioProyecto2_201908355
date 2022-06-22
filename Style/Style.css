@@ -80,13 +80,23 @@ body{
     color: var(--primary);
     font-size: 3rem;
 }
+.input-text {
+    padding-top: 2rem;
+}
+.input-checkbox {
+    padding-top: 0.5rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.6rem;
+}
+.input-checkbox .label {
+    color: var(--fontprimary);
+    font-size: 1.5rem;
+}
 .input-text .label {
     color: var(--fontprimary);
     font-size: 2rem;
-}
-.input-text {
-    padding-top: 2rem;
-    font-size: 1.5rem;
 }
 .input-text .input {
     color: var(--fontsecondary);
