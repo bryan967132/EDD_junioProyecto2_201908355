@@ -58,6 +58,29 @@ body{
         background: var(--backLight); 
     }
 }
+.bodyCharge {
+    width: 100%;
+    padding: 6rem 6rem 0 6rem;
+    display: grid;
+    flex-direction: row;
+    row-gap: 1rem;
+}
+a{
+    text-decoration: none;
+}
+.seccion {
+    color: var(--blanco);
+	margin: auto;
+    font-family: var(--fontParrafo);
+    font-size: 3rem;
+}
+.subseccion {
+    color: var(--blanco1);
+	margin: auto;
+    font-family: var(--fontParrafo);
+    font-size: 2.2rem;
+}
+/*LOGIN*/
 .contenedorForm {
     position: absolute;
     width: 100%;
@@ -80,19 +103,9 @@ body{
     color: var(--primary);
     font-size: 3rem;
 }
+/*INPUT TEXT*/
 .input-text {
     padding-top: 2rem;
-}
-.input-checkbox {
-    padding-top: 0.5rem;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 0.6rem;
-}
-.input-checkbox .label {
-    color: var(--fontprimary);
-    font-size: 1.5rem;
 }
 .input-text .label {
     color: var(--fontprimary);
@@ -106,13 +119,61 @@ body{
     border-radius: 0.4rem;
     border: var(--gris) solid 0.1rem;
 }
+/*INPUT CHECKBOX*/
+.input-checkbox {
+    padding-top: 0.5rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.6rem;
+}
+.input-checkbox .label {
+    color: var(--fontprimary);
+    font-size: 1.5rem;
+}
+/*INPUT CHOOSEFILE*/
+.input-file {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+.input-file-1 + label {
+    text-align: center;
+    background-color: var(--thirdy);
+    color: var(--blanco);
+    border-radius: 0.4rem;
+    border: var(--fontprimary) solid 0.2rem;
+}
+.input-file-1:focus + label,
+.input-file-1.has-focus + label,
+.input-file-1 + label:hover {
+    background-color: var(--primary);
+}
+.input-file + label svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+    fill: currentColor;
+    margin-top: -0.25em;
+    margin-right: 0.25em;
+}
+.iborrainputfile {
+	font-size:1.6rem; 
+	font-weight:normal;
+    cursor: pointer;
+    font-size: 1.8rem;
+}
+/*BUTTON*/
 .button-login {
     width: 100%;
     padding-top: 3rem;
     padding-bottom: 1rem;
     font-size: 1.8rem;
 }
-.button-login .button {
+.button1 {
     width: 100%;
     height: 4rem;
     border-radius: 0.4rem;
@@ -121,6 +182,88 @@ body{
     color: var(--blanco);
     cursor: pointer;
 }
-.button-login .button:hover {
+.button1:hover {
     background-color: var(--verde);
+}
+/*BARRA NAVEGACIÓN*/
+.header{
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.contenedor{
+    width: 100%;
+    margin: 0 auto;
+    position: fixed;
+}
+.barra{
+    padding: 0 5rem;
+    background-color: var(--primary);
+}
+@media (min-width: 768px) {
+    .barra{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--primary);
+    }
+}
+.logo{
+    color: var(--blanco);
+    cursor: pointer;
+}
+.logo__nombre{
+    font-size: 2.5rem;
+}
+@media (max-width: 1080px) {
+    .logo__nombre{
+        font-size: 4rem;
+    }
+}
+@media (max-width: 1000px) {
+    .logo__nombre{
+        font-size: 3rem;
+    }
+}
+@media (max-width: 880px) {
+    .logo__nombre{
+        font-size: 2.5rem;
+    }
+}
+.no-margin{
+    margin: 0;
+}
+.centrar-texto{
+    text-align: center;
+}
+@media (min-width: 768px) {
+    .navegacion{
+        display: flex;
+        gap: 2.5rem;
+    }
+}
+.navegacion__enlace{
+    display: block;
+    text-align: center;
+    font-size: 1.6rem;
+    color: var(--blanco);
+    cursor: pointer;
+    
+}
+.navegacion__enlace:hover{
+    color: var(--blancoH);
+}
+/*MOSAICOS*/
+@media (min-width: 768px) {
+    .dos-columnas {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 2rem;
+    }
+    .tres-columnas {
+        display: grid;
+        padding-bottom: 2rem;
+        grid-template-columns: repeat(3, 1fr);
+        column-gap: 2rem;
+    }
 }
