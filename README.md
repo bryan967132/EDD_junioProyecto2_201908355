@@ -1,2 +1,2 @@
 ## EDD Junio 2022
-# Proyecto 1
+# Proyecto 2
