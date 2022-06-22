@@ -1,0 +1,116 @@
+:root{
+    --fontHeading: 'PT Sans', sans-serif;
+    --fontParrafo: 'Open Sans', sans-serif;
+    --fontConsola: 'Consolas', sans-serif;
+    
+    --fontprimary: rgb(0, 77, 166);
+    --fontsecondary: rgb(0, 32, 70);
+    --backDark: rgb(39, 39, 39);
+    --backLight: rgb(203, 203, 203);
+    --primary: #166FE5;
+    --secondary: #0058bc;
+    --thirdy: #0060cd;
+    --celeste: #01ACC0;
+    --celeste1: #00828D;
+    --agua: #26C98A;
+    --agua1: #00975E;
+    --verde: #42b72a;
+    --verdeLog: #379d23;
+    --verdeLogB: #267816;
+    --rojo: #C03425;
+    --rojo1: #a5281b;
+    --rojo2: #e34331;
+    --naranja: rgb(255, 160, 87);
+    --naranja1: rgb(206, 126, 65);
+    --morado: rgb(147, 70, 255);
+    --morado1: rgb(101, 47, 175);
+    --gris: #919395;
+    --blanco: #fff;
+    --blanco1:rgb(255, 255, 255);
+    --blancoH: #c3dfff;
+    --negro: #000;
+}
+html{
+    box-sizing: border-box;
+    font-size: 62.5%;
+}
+*,*::before{
+    box-sizing: inherit;
+}
+body{
+    font-family: var(--fontParrafo);
+    font-size: 1.2rem;
+    line-height: 2;
+    display: grid;
+    grid-template-rows: repeat(3,auto);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+@media (prefers-color-scheme: dark) {
+    body { 
+        background: var(--backDark); 
+    }
+}
+@media (prefers-color-scheme: light) {
+    body { 
+        background: var(--backLight); 
+    }
+}
+.contenedorForm {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.formulario {
+    background-color: var(--blanco);
+    display: grid;
+    border-radius: 1rem;
+    padding: 3rem;
+}
+.formTitulo {
+    text-align: center;
+}
+.formTitulo .label {
+    color: var(--primary);
+    font-size: 3rem;
+}
+.input-text .label {
+    color: var(--fontprimary);
+    font-size: 2rem;
+}
+.input-text {
+    padding-top: 2rem;
+    font-size: 1.5rem;
+}
+.input-text .input {
+    color: var(--fontsecondary);
+    width: 100%;
+    outline: none;
+    height: 3.5rem;
+    border-radius: 0.4rem;
+    border: var(--gris) solid 0.1rem;
+}
+.button-login {
+    width: 100%;
+    padding-top: 3rem;
+    padding-bottom: 1rem;
+    font-size: 1.8rem;
+}
+.button-login .button {
+    width: 100%;
+    height: 4rem;
+    border-radius: 0.4rem;
+    background-color: var(--verdeLog);
+    border: var(--verdeLogB) solid 0.2rem;
+    color: var(--blanco);
+    cursor: pointer;
+}
+.button-login .button:hover {
+    background-color: var(--verde);
+}
