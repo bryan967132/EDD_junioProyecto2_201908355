@@ -64,26 +64,26 @@ function statusMovies() {
 
 function statusClients() {
     if(localStorage.getItem('clientsCharged') != null) {
-        document.getElementById('status-clients').innerHTML = '¡Clientes Cargadas!'
+        document.getElementById('status-clients').innerHTML = '¡Clientes Cargados!'
         return
     }
-    document.getElementById('status-clients').innerHTML = '¡No Hay Clientes Cargadas!'
+    document.getElementById('status-clients').innerHTML = '¡No Hay Clientes Cargados!'
 }
 
 function statusActors() {
     if(localStorage.getItem('actorsCharged') != null) {
-        document.getElementById('status-actors').innerHTML = '¡Actores Cargadas!'
+        document.getElementById('status-actors').innerHTML = '¡Actores Cargados!'
         return
     }
-    document.getElementById('status-actors').innerHTML = '¡No Hay Actores Cargadas!'
+    document.getElementById('status-actors').innerHTML = '¡No Hay Actores Cargados!'
 }
 
 function statusCategories() {
     if(localStorage.getItem('categoriesCharged') != null) {
-        document.getElementById('status-categories').innerHTML = '¡Actores Cargadas!'
+        document.getElementById('status-categories').innerHTML = '¡Categorías Cargadas!'
         return
     }
-    document.getElementById('status-categories').innerHTML = '¡No Hay Actores Cargadas!'
+    document.getElementById('status-categories').innerHTML = '¡No Hay Categorías Cargadas!'
 }
 
 function deleteMovies() {
@@ -130,6 +130,16 @@ function createClient(dpi,nombre_completo,nombre_usuario,correo,contrasenia,tele
     localStorage.setItem('clientsCharged',JSON.stringify([JSON.parse(JSON.stringify(new Cliente(dpi,nombre_completo,nombre_usuario,correo,contrasenia,telefono)))]))
 }
 
+function createActor(dni,nombre_actor,correo,descripcion) {
+    if(localStorage.getItem('actorsCharged') != null) {
+        let actorsCharged = JSON.parse(localStorage.getItem('actorsCharged'))
+        actorsCharged.push(JSON.parse(JSON.stringify(new Actor(dni,nombre_actor,correo,descripcion))))
+        localStorage.setItem('actorsCharged',JSON.stringify(actorsCharged))
+        return
+    }
+    localStorage.setItem('actorsCharged',JSON.stringify([JSON.parse(JSON.stringify(new Actor(dni,nombre_actor,correo,descripcion)))]))
+}
+
 function chargeMovies() {
     let file = document.getElementById('filemovies').files[0]
     if(file) {
@@ -159,11 +169,29 @@ function chargeClients() {
                 createClient(element['dpi'],element['nombre_completo'],element['nombre_usuario'],element['correo'],element['contrasenia'],element['telefono'])
             )
             statusClients()
-            alert('Películas Cargados')
+            alert('Clientes Cargados')
         }
         reader.onerror = function(evt) {alert('Ha ocurrido un error al cargar el archivo')}
     }
     document.getElementById('fileclients').value = ''
+}
+
+function chargeActors() {
+    let file = document.getElementById('fileactors').files[0]
+    if(file) {
+        let reader = new FileReader()
+        reader.readAsText(file,'UTF-8')
+        reader.onload = function(evt) {
+            let users = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
+            users.forEach(element =>
+                createActor(element['dni'],element['nombre_actor'],element['correo'],element['descripcion'])
+            )
+            statusActors()
+            alert('Actores Cargados')
+        }
+        reader.onerror = function(evt) {alert('Ha ocurrido un error al cargar el archivo')}
+    }
+    document.getElementById('fileactors').value = ''
 }
 
 function getOffset(id) {
