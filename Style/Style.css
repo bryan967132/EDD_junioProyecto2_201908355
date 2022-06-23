@@ -68,6 +68,12 @@ body{
 a{
     text-decoration: none;
 }
+.padding-top-1 {
+    padding-top: 3rem;
+}
+.padding-top-2 {
+    padding-top: 9rem;
+}
 .seccion {
     color: var(--blanco);
 	margin: auto;
@@ -146,6 +152,7 @@ a{
     color: var(--blanco);
     border-radius: 0.4rem;
     border: var(--fontprimary) solid 0.2rem;
+    cursor: pointer;
 }
 .input-file-1:focus + label,
 .input-file-1.has-focus + label,
@@ -181,6 +188,7 @@ a{
     border: var(--verdeLogB) solid 0.2rem;
     color: var(--blanco);
     cursor: pointer;
+    font-size: 1.8rem;
 }
 .button1:hover {
     background-color: var(--verde);
@@ -213,7 +221,7 @@ a{
     cursor: pointer;
 }
 .logo__nombre{
-    font-size: 2.5rem;
+    font-size: 3rem;
 }
 @media (max-width: 1080px) {
     .logo__nombre{
@@ -239,13 +247,13 @@ a{
 @media (min-width: 768px) {
     .navegacion{
         display: flex;
-        gap: 2.5rem;
+        gap: 3rem;
     }
 }
 .navegacion__enlace{
     display: block;
     text-align: center;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     color: var(--blanco);
     cursor: pointer;
     
