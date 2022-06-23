@@ -94,6 +94,12 @@ footer {
     font-family: var(--fontParrafo);
     font-size: 2.2rem;
 }
+.msg {
+    color: var(--blanco1);
+	margin: auto;
+    font-family: var(--fontParrafo);
+    font-size: 1.8rem;
+}
 /*LOGIN*/
 .contenedorForm {
     position: absolute;
@@ -185,7 +191,7 @@ footer {
 .button-group {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 4rem;
 }
 .button-login {
     width: 100%;
@@ -336,7 +342,7 @@ footer {
 @media (min-width: 768px) {
     .download-graph {
         display: grid;
-        grid-template-columns: 1fr 3fr 2fr 1fr;
+        grid-template-columns: 4fr 2fr;
         column-gap: 2rem;
     }
     .dos-columnas {
@@ -354,7 +360,6 @@ footer {
 /*GRAFOS*/
 .graph-1 {
     background: var(--blanco);
-    grid-column: 2 / 3;
     border-radius: 1rem;
     padding: 0.5rem;
 }
