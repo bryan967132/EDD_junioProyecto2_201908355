@@ -8,6 +8,7 @@
         <link rel="stylesheet" type="text/css" href="./Style/normalize.css">
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="./Style/Style.css">
+        <script src="./Js/Script.js"></script>
     </head>
     <body>
         <div class="contenedorForm">
@@ -28,7 +29,7 @@
                     <label for="rol" class="label">Administrador</label>
                 </div>
                 <div class="button-login">
-                    <button type="button" class="button1" onclick="">Iniciar Sesión</button>
+                    <button type="button" class="button1" onclick="login()">Iniciar Sesión</button>
                 </div>
             </form>
         </div>
@@ -36,8 +37,10 @@
             window.addEventListener(
                 'keydown',
                 function (event) {
-                    if(event.keyCode == 13) {
-                        
+                    let user = document.getElementById('user').value
+                    let pass = document.getElementById('password').value
+                    if(user.replace(' ','') != '' && pass.replace(' ','') != '' && event.keyCode == 13) {
+                        login()
                     }
                 },
                 false
