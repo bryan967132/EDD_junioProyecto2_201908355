@@ -28,6 +28,13 @@ class Actor {
     }
 }
 
+class Categoria {
+    constructor(id_categoria,company) {
+        this.id_categoria = id_categoria
+        this.company = company
+    }
+}
+
 function login() {
     let user = document.getElementById('user').value
     let pass = document.getElementById('password').value
@@ -140,14 +147,24 @@ function createActor(dni,nombre_actor,correo,descripcion) {
     localStorage.setItem('actorsCharged',JSON.stringify([JSON.parse(JSON.stringify(new Actor(dni,nombre_actor,correo,descripcion)))]))
 }
 
+function createCategory(id_categoria,company) {
+    if(localStorage.getItem('categoriesCharged') != null) {
+        let categoriesCharged = JSON.parse(localStorage.getItem('categoriesCharged'))
+        categoriesCharged.push(JSON.parse(JSON.stringify(new Categoria(id_categoria,company))))
+        localStorage.setItem('categoriesCharged',JSON.stringify(categoriesCharged))
+        return
+    }
+    localStorage.setItem('categoriesCharged',JSON.stringify([JSON.parse(JSON.stringify(new Categoria(id_categoria,company)))]))
+}
+
 function chargeMovies() {
     let file = document.getElementById('filemovies').files[0]
     if(file) {
         let reader = new FileReader()
         reader.readAsText(file,'UTF-8')
         reader.onload = function(evt) {
-            let users = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
-            users.forEach(element =>
+            let clients = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
+            clients.forEach(element =>
                 createMovie(element['id_pelicula'],element['nombre_pelicula'],element['descripcion'],element['puntuacion_star'],element['precio_Q'])
             )
             statusMovies()
@@ -164,8 +181,8 @@ function chargeClients() {
         let reader = new FileReader()
         reader.readAsText(file,'UTF-8')
         reader.onload = function(evt) {
-            let users = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
-            users.forEach(element =>
+            let clients = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
+            clients.forEach(element =>
                 createClient(element['dpi'],element['nombre_completo'],element['nombre_usuario'],element['correo'],element['contrasenia'],element['telefono'])
             )
             statusClients()
@@ -182,8 +199,8 @@ function chargeActors() {
         let reader = new FileReader()
         reader.readAsText(file,'UTF-8')
         reader.onload = function(evt) {
-            let users = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
-            users.forEach(element =>
+            let actors = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
+            actors.forEach(element =>
                 createActor(element['dni'],element['nombre_actor'],element['correo'],element['descripcion'])
             )
             statusActors()
@@ -192,6 +209,24 @@ function chargeActors() {
         reader.onerror = function(evt) {alert('Ha ocurrido un error al cargar el archivo')}
     }
     document.getElementById('fileactors').value = ''
+}
+
+function chargeCategories() {
+    let file = document.getElementById('filecategory').files[0]
+    if(file) {
+        let reader = new FileReader()
+        reader.readAsText(file,'UTF-8')
+        reader.onload = function(evt) {
+            let categories = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
+            categories.forEach(element =>
+                createCategory(element['id_categoria'],element['company'])
+            )
+            statusCategories()
+            alert('Actores Cargados')
+        }
+        reader.onerror = function(evt) {alert('Ha ocurrido un error al cargar el archivo')}
+    }
+    document.getElementById('filecategory').value = ''
 }
 
 function getOffset(id) {
@@ -205,5 +240,7 @@ function getOffset(id) {
     }
     return {top: _y,left: _x}
 }
+
 function header() {scroll(0,0)}
+
 function structures() {scroll(0,getOffset('graphs').top)}
