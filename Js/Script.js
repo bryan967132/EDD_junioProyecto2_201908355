@@ -241,6 +241,46 @@ function getOffset(id) {
     return {top: _y,left: _x}
 }
 
+function getGraphMovies() {
+    document.getElementById('button-group').innerHTML = `
+    <button type="button" class="button1-t-clicked">Grafo Películas</button>
+    <button type="button" class="button1-t" onclick="getGraphClients()">Grafo Clientes</button>
+    <button type="button" class="button1-t" onclick="getGraphActors()">Grafo Actores</button>
+    <button type="button" class="button1-t" onclick="getGraphCategories()">Grafo Categorías</button>
+    <button type="button" class="button2" onclick="download()">Descargar Grafo</button>`
+}
+
+function getGraphClients() {
+    document.getElementById('button-group').innerHTML = `
+    <button type="button" class="button1-t" onclick="getGraphMovies()">Grafo Películas</button>
+    <button type="button" class="button1-t-clicked">Grafo Clientes</button>
+    <button type="button" class="button1-t" onclick="getGraphActors()">Grafo Actores</button>
+    <button type="button" class="button1-t" onclick="getGraphCategories()">Grafo Categorías</button>
+    <button type="button" class="button2" onclick="download()">Descargar Grafo</button>`
+}
+
+function getGraphActors() {
+    document.getElementById('button-group').innerHTML = `
+    <button type="button" class="button1-t" onclick="getGraphMovies()">Grafo Películas</button>
+    <button type="button" class="button1-t" onclick="getGraphClients()">Grafo Clientes</button>
+    <button type="button" class="button1-t-clicked">Grafo Actores</button>
+    <button type="button" class="button1-t" onclick="getGraphCategories()">Grafo Categorías</button>
+    <button type="button" class="button2" onclick="download()">Descargar Grafo</button>`
+}
+
+function getGraphCategories() {
+    document.getElementById('button-group').innerHTML = `
+    <button type="button" class="button1-t" onclick="getGraphMovies()">Grafo Películas</button>
+    <button type="button" class="button1-t" onclick="getGraphClients()">Grafo Clientes</button>
+    <button type="button" class="button1-t" onclick="getGraphActors()">Grafo Actores</button>
+    <button type="button" class="button1-t-clicked">Grafo Categorías</button>
+    <button type="button" class="button2" onclick="download()">Descargar Grafo</button>`
+}
+
+function download() {
+
+}
+
 function header() {scroll(0,0)}
 
 function structures() {scroll(0,getOffset('graphs').top)}
