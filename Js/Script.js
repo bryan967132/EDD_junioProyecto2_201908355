@@ -75,6 +75,23 @@ function createClient(dpi,nombre_completo,nombre_usuario,correo,contrasenia,tele
     localStorage.setItem('clientsCharged',JSON.stringify([JSON.parse(JSON.stringify(new Cliente(dpi,nombre_completo,nombre_usuario,correo,contrasenia,telefono)))]))
 }
 
+function chargeMovies() {
+    let file = document.getElementById('filemovies').files[0]
+    if(file) {
+        let reader = new FileReader()
+        reader.readAsText(file,'UTF-8')
+        reader.onload = function(evt) {
+            let users = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
+            users.forEach(element =>
+                createMovie(element['id_pelicula'],element['nombre_pelicula'],element['descripcion'],element['puntuacion_star'],element['precio_Q'])
+            )
+            alert('Clientes Cargados')
+        }
+        reader.onerror = function(evt) {alert('Ha ocurrido un error al cargar el archivo')}
+    }
+    document.getElementById('filemovies').value = ''
+}
+
 function chargeClients() {
     let file = document.getElementById('fileclients').files[0]
     if(file) {
@@ -82,10 +99,10 @@ function chargeClients() {
         reader.readAsText(file,'UTF-8')
         reader.onload = function(evt) {
             let users = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
-            users.forEach(element => 
+            users.forEach(element =>
                 createClient(element['dpi'],element['nombre_completo'],element['nombre_usuario'],element['correo'],element['contrasenia'],element['telefono'])
-            );
-            alert('Usuarios Cargados')
+            )
+            alert('Películas Cargados')
         }
         reader.onerror = function(evt) {alert('Ha ocurrido un error al cargar el archivo')}
     }
