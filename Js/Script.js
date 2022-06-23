@@ -1,3 +1,13 @@
+class Pelicula {
+    constructor(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q) {
+        this.id_pelicula = id_pelicula
+        this.nombre_pelicula = nombre_pelicula
+        this.descripcion = descripcion
+        this.puntuacion_star = puntuacion_star
+        this.precio_Q = precio_Q
+    }
+}
+
 class Cliente {
     constructor(dpi,nombre_completo,nombre_usuario,correo,contrasenia,telefono) {
         this.dpi = dpi
@@ -7,15 +17,6 @@ class Cliente {
         this.contrasenia = contrasenia
         this.telefono = telefono
     }
-}
-
-function reset() {
-    localStorage.clear()
-}
-
-function deleteClients() {
-    localStorage.removeItem('clientsCharged')
-    alert('Clientes Eliminados')
 }
 
 function login() {
@@ -38,6 +39,30 @@ function login() {
         document.getElementById('password').value = ''
         return
     }
+}
+
+function reset() {
+    localStorage.clear()
+}
+
+function deleteMovies() {
+    localStorage.removeItem('moviesCharged')
+    alert('Películas Eliminados')
+}
+
+function deleteClients() {
+    localStorage.removeItem('clientsCharged')
+    alert('Clientes Eliminados')
+}
+
+function createMovie(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q) {
+    if(localStorage.getItem('moviesCharged') != null) {
+        let moviesCharged = JSON.parse(localStorage.getItem('moviesCharged'))
+        moviesCharged.push(JSON.parse(JSON.stringify(new Pelicula(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q))))
+        localStorage.setItem('moviesCharged',JSON.stringify(moviesCharged))
+        return
+    }
+    localStorage.setItem('moviesCharged',JSON.stringify([JSON.parse(JSON.stringify(new Pelicula(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q)))]))
 }
 
 function createClient(dpi,nombre_completo,nombre_usuario,correo,contrasenia,telefono) {
