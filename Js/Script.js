@@ -19,6 +19,15 @@ class Cliente {
     }
 }
 
+class Actor {
+    constructor(dni,nombre_actor,correo,descripcion) {
+        this.dni = dni
+        this.nombre_actor = nombre_actor
+        this.correo = correo
+        this.descripcion = descripcion
+    }
+}
+
 function login() {
     let user = document.getElementById('user').value
     let pass = document.getElementById('password').value
@@ -43,6 +52,38 @@ function login() {
 
 function reset() {
     localStorage.clear()
+}
+
+function statusMovies() {
+    if(localStorage.getItem('moviesCharged') != null) {
+        document.getElementById('status-movies').innerHTML = '¡Películas Cargadas!'
+        return
+    }
+    document.getElementById('status-movies').innerHTML = '¡No Hay Películas Cargadas!'
+}
+
+function statusClients() {
+    if(localStorage.getItem('clientsCharged') != null) {
+        document.getElementById('status-clients').innerHTML = '¡Clientes Cargadas!'
+        return
+    }
+    document.getElementById('status-clients').innerHTML = '¡No Hay Clientes Cargadas!'
+}
+
+function statusActors() {
+    if(localStorage.getItem('actorsCharged') != null) {
+        document.getElementById('status-actors').innerHTML = '¡Actores Cargadas!'
+        return
+    }
+    document.getElementById('status-actors').innerHTML = '¡No Hay Actores Cargadas!'
+}
+
+function statusCategories() {
+    if(localStorage.getItem('categoriesCharged') != null) {
+        document.getElementById('status-categories').innerHTML = '¡Actores Cargadas!'
+        return
+    }
+    document.getElementById('status-categories').innerHTML = '¡No Hay Actores Cargadas!'
 }
 
 function deleteMovies() {
@@ -85,6 +126,7 @@ function chargeMovies() {
             users.forEach(element =>
                 createMovie(element['id_pelicula'],element['nombre_pelicula'],element['descripcion'],element['puntuacion_star'],element['precio_Q'])
             )
+            statusMovies()
             alert('Clientes Cargados')
         }
         reader.onerror = function(evt) {alert('Ha ocurrido un error al cargar el archivo')}
@@ -102,6 +144,7 @@ function chargeClients() {
             users.forEach(element =>
                 createClient(element['dpi'],element['nombre_completo'],element['nombre_usuario'],element['correo'],element['contrasenia'],element['telefono'])
             )
+            statusClients()
             alert('Películas Cargados')
         }
         reader.onerror = function(evt) {alert('Ha ocurrido un error al cargar el archivo')}

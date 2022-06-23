@@ -26,7 +26,7 @@
     --morado1: rgb(101, 47, 175);
     --gris: #919395;
     --blanco: #fff;
-    --blanco1:rgb(255, 255, 255);
+    --blanco1:rgba(255, 255, 255, 0.765);
     --blancoH: #c3dfff;
     --negro: #000;
 }
