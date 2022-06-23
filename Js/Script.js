@@ -1,3 +1,23 @@
+class Cliente {
+    constructor(dpi,nombre_completo,nombre_usuario,correo,contrasenia,telefono) {
+        this.dpi = dpi
+        this.nombre_completo = nombre_completo
+        this.nombre_usuario = nombre_usuario
+        this.correo = correo
+        this.contrasenia = contrasenia
+        this.telefono = telefono
+    }
+}
+
+function reset() {
+    localStorage.clear()
+}
+
+function deleteClients() {
+    localStorage.removeItem('clientsCharged')
+    alert('Clientes Eliminados')
+}
+
 function login() {
     let user = document.getElementById('user').value
     let pass = document.getElementById('password').value
@@ -20,18 +40,31 @@ function login() {
     }
 }
 
+function createClient(dpi,nombre_completo,nombre_usuario,correo,contrasenia,telefono) {
+    if(localStorage.getItem('clientsCharged') != null) {
+        let clientsCharged = JSON.parse(localStorage.getItem('clientsCharged'))
+        clientsCharged.push(JSON.parse(JSON.stringify(new Cliente(dpi,nombre_completo,nombre_usuario,correo,contrasenia,telefono))))
+        localStorage.setItem('clientsCharged',JSON.stringify(clientsCharged))
+        return
+    }
+    localStorage.setItem('clientsCharged',JSON.stringify([JSON.parse(JSON.stringify(new Cliente(dpi,nombre_completo,nombre_usuario,correo,contrasenia,telefono)))]))
+}
+
 function chargeClients() {
-    let file = document.getElementById('filemovies').files[0]
+    let file = document.getElementById('fileclients').files[0]
     if(file) {
         let reader = new FileReader()
         reader.readAsText(file,'UTF-8')
         reader.onload = function(evt) {
             let users = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
-            console.log(users)
+            users.forEach(element => 
+                createClient(element['dpi'],element['nombre_completo'],element['nombre_usuario'],element['correo'],element['contrasenia'],element['telefono'])
+            );
+            alert('Usuarios Cargados')
         }
         reader.onerror = function(evt) {alert('Ha ocurrido un error al cargar el archivo')}
     }
-    document.getElementById('filemovies').value = ''
+    document.getElementById('fileclients').value = ''
 }
 
 function getOffset(id) {
