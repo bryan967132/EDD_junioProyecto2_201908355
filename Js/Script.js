@@ -88,12 +88,26 @@ function statusCategories() {
 
 function deleteMovies() {
     localStorage.removeItem('moviesCharged')
-    alert('Películas Eliminados')
+    statusMovies()
+    alert('Películas Eliminadas')
 }
 
 function deleteClients() {
     localStorage.removeItem('clientsCharged')
+    statusClients()
     alert('Clientes Eliminados')
+}
+
+function deleteActors() {
+    localStorage.removeItem('actorsCharged')
+    statusActors()
+    alert('Actores Eliminados')
+}
+
+function deleteCategories() {
+    localStorage.removeItem('categoriesCharged')
+    statusCategories()
+    alert('Categorías Eliminadas')
 }
 
 function createMovie(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q) {
