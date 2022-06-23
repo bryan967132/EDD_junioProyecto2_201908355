@@ -20,6 +20,20 @@ function login() {
     }
 }
 
+function chargeClients() {
+    let file = document.getElementById('filemovies').files[0]
+    if(file) {
+        let reader = new FileReader()
+        reader.readAsText(file,'UTF-8')
+        reader.onload = function(evt) {
+            let users = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
+            console.log(users)
+        }
+        reader.onerror = function(evt) {alert('Ha ocurrido un error al cargar el archivo')}
+    }
+    document.getElementById('filemovies').value = ''
+}
+
 function getOffset(id) {
     let elemento = document.getElementById(id)
     let _x = 0
