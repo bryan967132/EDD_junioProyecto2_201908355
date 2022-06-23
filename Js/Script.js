@@ -229,18 +229,6 @@ function chargeCategories() {
     document.getElementById('filecategory').value = ''
 }
 
-function getOffset(id) {
-    let elemento = document.getElementById(id)
-    let _x = 0
-    let _y = 0
-    while(elemento && !isNaN(elemento.offsetLeft) && !isNaN(elemento.offsetTop)) {
-        _x += elemento.offsetLeft - elemento.scrollLeft
-        _y += elemento.offsetTop - elemento.scrollTop
-        elemento = elemento.offsetParent
-    }
-    return {top: _y,left: _x}
-}
-
 function getGraphMovies() {
     document.getElementById('button-group').innerHTML = `
     <button type="button" class="button1-t-clicked">Grafo Películas</button>
@@ -279,6 +267,18 @@ function getGraphCategories() {
 
 function download() {
 
+}
+
+function getOffset(id) {
+    let elemento = document.getElementById(id)
+    let _x = 0
+    let _y = 0
+    while(elemento && !isNaN(elemento.offsetLeft) && !isNaN(elemento.offsetTop)) {
+        _x += elemento.offsetLeft - elemento.scrollLeft
+        _y += elemento.offsetTop - elemento.scrollTop
+        elemento = elemento.offsetParent
+    }
+    return {top: _y,left: _x}
 }
 
 function header() {scroll(0,0)}
