@@ -236,6 +236,16 @@ class LS {
         this.ultimo = this.primero
         this.indice ++
     }
+    match(user,pass) {
+        let actual = this.primero
+        while(actual) {
+            if(user == actual.objeto.nombre_usuario && pass == actual.objeto.contrasenia) {
+                return {status: true,dpi: actual.objeto.dpi,nombre_completo: actual.objeto.nombre_completo}
+            }
+            actual = actual.siguiente
+        }
+        return {status: false}
+    }
     getDot() {
         let dot = 'digraph g{rankdir=LR;node[shape=box];'
         let actual = this.primero
@@ -381,28 +391,6 @@ class Categoria {
     constructor(id_categoria,company) {
         this.id_categoria = id_categoria
         this.company = company
-    }
-}
-
-function login() {
-    let user = document.getElementById('user').value
-    let pass = document.getElementById('password').value
-    let admin = document.getElementById('rol').checked
-    if(user.replace(' ','') == '' || pass.replace(' ','') == '') {
-        alert('Todos los campos son obligatorios')
-        document.getElementById('rol').checked = false
-        return
-    }
-    if(admin) {
-        if(user == 'EDD' && pass == '123') {
-            window.location.href = 'AdminProfile.html'
-            alert('Bienvenido Wilfred Perez')
-            return
-        }
-        alert('Verifique sus credenciales')
-        document.getElementById('user').value = ''
-        document.getElementById('password').value = ''
-        return
     }
 }
 
@@ -676,6 +664,40 @@ function getGraphCategories() {
     <button type="button" class="button1-t" onclick="getGraphActors()">Grafo Actores</button>
     <button type="button" class="button1-t-clicked">Grafo Categorías</button>
     <button type="button" class="button2" onclick="download()">Descargar Grafo</button>`
+}
+
+function login() {
+    let user = document.getElementById('user').value
+    let pass = document.getElementById('password').value
+    let admin = document.getElementById('rol').checked
+    if(user.replace(' ','') == '' || pass.replace(' ','') == '') {
+        alert('Todos los campos son obligatorios')
+        document.getElementById('rol').checked = false
+        return
+    }
+    if(admin) {
+        if(user == 'EDD' && pass == '123') {
+            document.getElementById('user').value = ''
+            document.getElementById('password').value = ''
+            window.location.href = 'AdminProfile.html'
+            alert('Bienvenido Wilfred Perez')
+            return
+        }
+        alert('Verifique sus credenciales')
+        document.getElementById('user').value = ''
+        document.getElementById('password').value = ''
+        return
+    }
+    let clientFind = getClients().match(user,pass)
+    if(clientFind.status) {
+        document.getElementById('user').value = ''
+        document.getElementById('password').value = ''
+        window.location.href = `ClientProfile.html?dpi=${clientFind.dpi}`
+        return
+    }
+    alert('Verifique sus credenciales')
+    document.getElementById('user').value = ''
+    document.getElementById('password').value = ''
 }
 
 function download() {
