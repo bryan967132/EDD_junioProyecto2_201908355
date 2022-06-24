@@ -8,6 +8,14 @@ class NodoA {
     }
 }
 
+class NodoH {
+    constructor(indice) {
+        this.indice = indice
+        this.siguiente = null
+        this.acceso = new LS()
+    }
+}
+
 class NodoS {
     constructor(indice,objeto) {
         this.indice = indice
@@ -30,7 +38,7 @@ class AB {
         if(!actual) {
             return new NodoA(nuevo,this.id)
         }
-        if(nuevo.nombre_actor > actual.objeto.nombre_actor) {
+        if(nuevo.dni > actual.objeto.dni) {
             actual.derecha = this.add(nuevo,actual.derecha)
         }else {
             actual.izquierda = this.add(nuevo,actual.izquierda)
@@ -112,19 +120,19 @@ class AVL {
         if(!nodo) {
             return new NodoA(nuevo,this.id)
         }
-        if(nuevo.nombre_pelicula < nodo.objeto.nombre_pelicula) {
+        if(nuevo.id_pelicula < nodo.objeto.id_pelicula) {
             nodo.izquierda = this.insertElement(nuevo,nodo.izquierda)
             if(this.getHeight(nodo.izquierda) - this.getHeight(nodo.derecha) == 2) {
-                if(nuevo.nombre_pelicula < nodo.izquierda.objeto.nombre_pelicula) {
+                if(nuevo.id_pelicula < nodo.izquierda.objeto.id_pelicula) {
                     nodo = this.rotateWithLeftChild(nodo)
                 }else {
                     nodo = this.doubleWithLeftChild(nodo)
                 }
             }
-        }else if(nuevo.nombre_pelicula > nodo.objeto.nombre_pelicula) {
+        }else if(nuevo.id_pelicula > nodo.objeto.id_pelicula) {
             nodo.derecha = this.insertElement(nuevo,nodo.derecha)
             if(this.getHeight(nodo.derecha) - this.getHeight(nodo.izquierda) == 2) {
-                if(nuevo.nombre_pelicula > nodo.derecha.objeto.nombre_pelicula) {
+                if(nuevo.id_pelicula > nodo.derecha.objeto.id_pelicula) {
                     nodo = this.rotateWithRightChild(nodo)
                 }else {
                     nodo = this.doubleWithRightChild(nodo)
@@ -242,6 +250,100 @@ class LS {
         }
         dot += '}'
         return dot
+    }
+    getSubDot() {
+        let _dot = ''
+        let actual = this.primero
+        let ultimo = null
+        let _enlaces = ''
+        while(actual) {
+            _dot += `\n\tnodo${actual.objeto.id_categoria}[height=0.1 width=2 fontsize="11pt" label="${actual.objeto.company}"];`
+            if(ultimo) {
+                _enlaces += ` -> nodo${actual.objeto.id_categoria}`
+            }else {
+                _enlaces += `nodo${actual.objeto.id_categoria}`
+            }
+            ultimo = actual
+            actual = actual.siguiente
+        }
+        _enlaces += ';'
+        return {dot: _dot, enlaces: _enlaces}
+    }
+}
+
+class THash {
+    constructor(n,isrehashing) {
+        this.primero = null
+        this.ultimo = null
+        this.llenos = 0
+        this.size = n
+        this.isrehashing = isrehashing
+        for(let i = 0; i < n; i ++) {
+            this.add(i)
+        }
+    }
+    add(nuevo) {
+        if(this.primero) {
+            this.ultimo.siguiente = new NodoH(nuevo)
+            this.ultimo = this.ultimo.siguiente
+            return
+        }
+        this.primero = new NodoH(nuevo)
+        this.ultimo = this.primero
+    }
+    insert(nuevo) {
+        let nuevoHash = this.search(nuevo.id_categoria % this.size)
+        nuevoHash.acceso.add(nuevo)
+        this.llenos ++
+        if(this.isrehashing) {
+            if(this.llenos / this.size >= 0.75) {
+                this.hashing(5)
+            }
+        }
+    }
+    search(indice) {
+        let actual = this.primero
+        while(actual) {
+            if(actual.indice == indice) {
+                return actual
+            }
+            actual = actual.siguiente
+        }
+    }
+    hashing(n) {
+        for(let i = this.size; i < this.size + n; i ++) {
+            this.add(i)
+        }
+        this.size += n
+    }
+    printHash() {
+        let actual = this.primero
+        console.log('Llenos:',this.llenos)
+        while(actual) {
+            console.log('Posicion:',actual.indice)
+            actual.acceso.printList()
+            actual = actual.siguiente
+        }
+    }
+    getDot() {
+        let actual = this.primero
+        let struct = '\n\tstruct[label="'
+        let nodes = ''
+        let enlaces = ''
+        while(actual) {
+            struct += `<f${actual.indice}> ${actual.indice}`
+            if(actual.siguiente) {
+                struct += '|'
+            }
+            if(actual.acceso.primero) {
+                let subdot = actual.acceso.getSubDot()
+                nodes += subdot.dot
+                enlaces += `\n\tstruct:f${actual.indice} -> ${subdot.enlaces}`
+            }
+            actual = actual.siguiente
+        }
+        struct += '" height=10];'
+        return `digraph g{\n\trankdir=LR;\n\tnode[shape=record];${struct}${nodes}${enlaces}\n}`
     }
 }
 
@@ -495,6 +597,15 @@ function getActors() {
     return actors
 }
 
+function getCategories() {
+    let categories = new THash(20)
+    try {
+        let categoriesCharged = JSON.parse(localStorage.getItem('categoriesCharged'))
+        categoriesCharged.forEach(category => categories.insert(new Categoria(category['id_categoria'],category['company'])))
+    } catch (error) {}
+    return categories
+}
+
 function graphMovies() {
     let movies = getMovies()
     if(movies.raiz) {
@@ -515,7 +626,6 @@ function graphClients() {
 
 function graphActors() {
     let actors = getActors()
-    console.log(actors)
     if(actors.raiz) {
         d3.select('#graph-1').graphviz().width(document.getElementById('graph-1').clientWidth).height(document.getElementById('graph-1').clientHeight - 10).scale(0.5).renderDot(actors.getDot())
         return
@@ -524,7 +634,8 @@ function graphActors() {
 }
 
 function graphCategories() {
-    d3.select('#graph-1').graphviz().renderDot('digraph g{}')
+    let categories = getCategories()
+    d3.select('#graph-1').graphviz().width(document.getElementById('graph-1').clientWidth).height(document.getElementById('graph-1').clientHeight - 10).scale(0.5).renderDot(categories.getDot())
 }
 
 function getGraphMovies() {
