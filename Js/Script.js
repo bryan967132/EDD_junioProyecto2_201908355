@@ -1,3 +1,137 @@
+class NodoA {
+    constructor(objeto,id) {
+        this.objeto = objeto
+        this.id = id
+        this.izquierda = null
+        this.derecha = null
+        this.altura = 0
+    }
+}
+
+class AVL {
+    constructor(){
+        this.raiz = null;
+        this.id = 0
+    }
+    getHeight(nodo) {
+        if(!nodo) {
+            return -1
+        }
+        return nodo.altura
+    }
+    getMaxHeight(izquierda,derecha) {
+        if(izquierda > derecha) {
+            return izquierda
+        }
+        return derecha
+    }
+    insert(valor) {
+        this.raiz = this.insertElement(valor,this.raiz)
+        this.id ++
+    }
+    insertElement(nuevo,nodo) {
+        if(!nodo) {
+            return new NodoA(nuevo,this.id)
+        }
+        if(nuevo.nombre_pelicula < nodo.objeto.nombre_pelicula) {
+            nodo.izquierda = this.insertElement(nuevo,nodo.izquierda)
+            if(this.getHeight(nodo.izquierda) - this.getHeight(nodo.derecha) == 2) {
+                if(nuevo.nombre_pelicula < nodo.izquierda.objeto.nombre_pelicula) {
+                    nodo = this.rotateWithLeftChild(nodo)
+                }else {
+                    nodo = this.doubleWithLeftChild(nodo)
+                }
+            }
+        }else if(nuevo.nombre_pelicula > nodo.objeto.nombre_pelicula) {
+            nodo.derecha = this.insertElement(nuevo,nodo.derecha)
+            if(this.getHeight(nodo.derecha) - this.getHeight(nodo.izquierda) == 2) {
+                if(nuevo.nombre_pelicula > nodo.derecha.objeto.nombre_pelicula) {
+                    nodo = this.rotateWithRightChild(nodo)
+                }else {
+                    nodo = this.doubleWithRightChild(nodo)
+                }
+            }
+        }
+        nodo.altura = this.getMaxHeight(this.getHeight(nodo.izquierda),this.getHeight(nodo.derecha)) + 1
+        return nodo
+    }
+    rotateWithLeftChild(nodo) {
+        let aux = nodo.izquierda
+        nodo.izquierda = aux.derecha
+        aux.derecha = nodo
+        nodo.altura = this.getMaxHeight(this.getHeight(nodo.izquierda),this.getHeight(nodo.derecha)) + 1
+        aux.altura = this.getMaxHeight(this.getHeight(aux.izquierda),nodo.altura) + 1
+        return aux
+    }
+    rotateWithRightChild(nodo) {
+        let aux = nodo.derecha
+        nodo.derecha = aux.izquierda
+        aux.izquierda = nodo
+        nodo.altura = this.getMaxHeight(this.getHeight(nodo.izquierda),this.getHeight(nodo.derecha)) + 1
+        aux.altura = this.getMaxHeight(this.getHeight(aux.derecha),nodo.algura) + 1
+        return aux
+    }
+    doubleWithLeftChild(nodo) {
+        nodo.izquierda = this.rotateWithRightChild(nodo.izquierda)
+        return this.rotateWithLeftChild(nodo)
+    }
+    doubleWithRightChild(nodo) {
+        nodo.derecha = this.rotateWithLeftChild(nodo.derecha)
+        return this.rotateWithRightChild(nodo)
+    }
+    //recorridos
+    preorden(){
+        this.pre_orden(this.raiz);
+    }
+    pre_orden(nodo){
+        if(nodo){
+            console.log("Valor:",nodo.objeto.nombre_pelicula);
+            this.pre_orden(nodo.izquierda);
+            this.pre_orden(nodo.derecha);
+        }
+    }
+    //inorden
+    inorden(){
+        this.in_orden(this.raiz);
+    }
+    in_orden(nodo){
+        if(nodo){
+            this.in_orden(nodo.izquierda);
+            console.log("Valor:",nodo.objeto.nombre_pelicula);
+            this.in_orden(nodo.derecha);    
+        }
+    }
+    //postorden
+    postorden(){
+        this.post_orden(this.raiz);
+    }
+    post_orden(nodo){
+        if(nodo){
+            this.post_orden(nodo.izquierda);
+            this.post_orden(nodo.derecha);
+            console.log("Valor:",nodo.objeto.nombre_pelicula);
+        }
+    }
+    getBranchesDot(actual) {
+        let etiqueta = ''
+        if(!actual.izquierda && !actual.derecha) {
+            etiqueta = `nodo${actual.id} [label="${actual.objeto.nombre_pelicula}"];`
+        }else {
+            etiqueta = `nodo${actual.id} [label="<C0> | ${actual.objeto.nombre_pelicula} | <C1>"];`
+        }
+        if(actual.izquierda) {
+            etiqueta += `${this.getBranchesDot(actual.izquierda)}nodo${actual.id}:C0 -> nodo${actual.izquierda.id};`
+        }
+        if(actual.derecha) {
+            etiqueta += `${this.getBranchesDot(actual.derecha)}nodo${actual.id}:C1 -> nodo${actual.derecha.id};`
+        }
+        return etiqueta
+    }
+    getDot() {
+        return `digraph G{node[shape = record];${this.getBranchesDot(this.raiz)}}`
+    }
+}
+
 class Pelicula {
     constructor(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q) {
         this.id_pelicula = id_pelicula
@@ -163,10 +297,8 @@ function chargeMovies() {
         let reader = new FileReader()
         reader.readAsText(file,'UTF-8')
         reader.onload = function(evt) {
-            let clients = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
-            clients.forEach(element =>
-                createMovie(element['id_pelicula'],element['nombre_pelicula'],element['descripcion'],element['puntuacion_star'],element['precio_Q'])
-            )
+            let movies = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
+            movies.forEach(movie => createMovie(movie['id_pelicula'],movie['nombre_pelicula'],movie['descripcion'],movie['puntuacion_star'],movie['precio_Q']))
             statusMovies()
             alert('Clientes Cargados')
         }
@@ -182,9 +314,7 @@ function chargeClients() {
         reader.readAsText(file,'UTF-8')
         reader.onload = function(evt) {
             let clients = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
-            clients.forEach(element =>
-                createClient(element['dpi'],element['nombre_completo'],element['nombre_usuario'],element['correo'],element['contrasenia'],element['telefono'])
-            )
+            clients.forEach(client => createClient(client['dpi'],client['nombre_completo'],client['nombre_usuario'],client['correo'],client['contrasenia'],client['telefono']))
             statusClients()
             alert('Clientes Cargados')
         }
@@ -200,9 +330,7 @@ function chargeActors() {
         reader.readAsText(file,'UTF-8')
         reader.onload = function(evt) {
             let actors = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
-            actors.forEach(element =>
-                createActor(element['dni'],element['nombre_actor'],element['correo'],element['descripcion'])
-            )
+            actors.forEach(actor => createActor(actor['dni'],actor['nombre_actor'],actor['correo'],actor['descripcion']))
             statusActors()
             alert('Actores Cargados')
         }
@@ -218,9 +346,7 @@ function chargeCategories() {
         reader.readAsText(file,'UTF-8')
         reader.onload = function(evt) {
             let categories = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
-            categories.forEach(element =>
-                createCategory(element['id_categoria'],element['company'])
-            )
+            categories.forEach(category => createCategory(category['id_categoria'],category['company']))
             statusCategories()
             alert('Actores Cargados')
         }
@@ -229,7 +355,38 @@ function chargeCategories() {
     document.getElementById('filecategory').value = ''
 }
 
+function getMovies() {
+    let movies = new AVL()
+    try {
+        let moviesCharged = JSON.parse(localStorage.getItem('moviesCharged'))
+        moviesCharged.forEach(movie => movies.insert(new Pelicula(movie['id_pelicula'],movie['nombre_pelicula'],movie['descripcion'],movie['puntuacion_star'],movie['precio_Q'])))
+    } catch (error) {}
+    return movies;
+}
+
+function graphMovies() {
+    let movies = getMovies()
+    if(movies.raiz) {
+        d3.select('#graph-1').graphviz().width(document.getElementById('graph-1').clientWidth).height(document.getElementById('graph-1').clientHeight - 10).renderDot(movies.getDot())
+        return
+    }
+    document.getElementById('graph-1').innerHTML = ''
+}
+
+function graphClients() {
+    document.getElementById('graph-1').innerHTML = ''
+}
+
+function graphActors() {
+    document.getElementById('graph-1').innerHTML = ''
+}
+
+function graphCategories() {
+    document.getElementById('graph-1').innerHTML = ''
+}
+
 function getGraphMovies() {
+    graphMovies()
     document.getElementById('button-group').innerHTML = `
     <button type="button" class="button1-t-clicked">Grafo Películas</button>
     <button type="button" class="button1-t" onclick="getGraphClients()">Grafo Clientes</button>
@@ -239,6 +396,7 @@ function getGraphMovies() {
 }
 
 function getGraphClients() {
+    graphClients()
     document.getElementById('button-group').innerHTML = `
     <button type="button" class="button1-t" onclick="getGraphMovies()">Grafo Películas</button>
     <button type="button" class="button1-t-clicked">Grafo Clientes</button>
@@ -248,6 +406,7 @@ function getGraphClients() {
 }
 
 function getGraphActors() {
+    graphActors()
     document.getElementById('button-group').innerHTML = `
     <button type="button" class="button1-t" onclick="getGraphMovies()">Grafo Películas</button>
     <button type="button" class="button1-t" onclick="getGraphClients()">Grafo Clientes</button>
@@ -257,6 +416,7 @@ function getGraphActors() {
 }
 
 function getGraphCategories() {
+    graphCategories()
     document.getElementById('button-group').innerHTML = `
     <button type="button" class="button1-t" onclick="getGraphMovies()">Grafo Películas</button>
     <button type="button" class="button1-t" onclick="getGraphClients()">Grafo Clientes</button>

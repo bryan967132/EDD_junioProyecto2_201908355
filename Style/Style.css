@@ -360,7 +360,8 @@ footer {
 /*GRAFOS*/
 .graph-1 {
     background: var(--blanco);
+    border: var(--blancoH) 0.5rem solid;
     border-radius: 1rem;
-    padding: 0.5rem;
+    resize: none;
 }
 /*DISPLAY*/
