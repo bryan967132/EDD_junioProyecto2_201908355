@@ -16,6 +16,77 @@ class NodoS {
     }
 }
 
+class AB {
+    constructor() {
+        this.raiz = null
+        this.dot = ''
+        this.id = 0
+    }
+    insert(nuevo) {
+        this.raiz = this.add(nuevo,this.raiz)
+        this.id ++
+    }
+    add(nuevo,actual) {
+        if(!actual) {
+            return new NodoA(nuevo,this.id)
+        }
+        if(nuevo.nombre_actor > actual.objeto.nombre_actor) {
+            actual.derecha = this.add(nuevo,actual.derecha)
+        }else {
+            actual.izquierda = this.add(nuevo,actual.izquierda)
+        }
+        return actual
+    }
+    preorden() {
+        this.pre_orden(this.raiz)
+    }
+    pre_orden(actual) {
+        if(actual) {
+            console.log('Valor:',actual.objeto)
+            this.pre_orden(actual.izquierda)
+            this.pre_orden(actual.derecha)
+        }
+    }
+    inorden() {
+        this.in_orden(this.raiz)
+    }
+    in_orden(actual) {
+        if(actual) {
+            this.in_orden(actual.izquierda)
+            console.log('Valor:',actual.objeto)
+            this.in_orden(actual.derecha)
+        }
+    }
+    posorden() {
+        this.pos_orden(this.raiz)
+    }
+    pos_orden(actual) {
+        if(actual) {
+            this.pos_orden(actual.izquierda)
+            this.pos_orden(actual.derecha)
+            console.log('Valor:',actual.objeto)
+        }
+    }
+    getBranchesDot(actual) {
+        let etiqueta = ''
+        if(!actual.izquierda && !actual.derecha) {
+            etiqueta = `nodo${actual.id} [label="${actual.objeto.nombre_actor}"];`
+        }else {
+            etiqueta = `nodo${actual.id} [label="<C0> | ${actual.objeto.nombre_actor} | <C1>"];`
+        }
+        if(actual.izquierda) {
+            etiqueta += `${this.getBranchesDot(actual.izquierda)}nodo${actual.id}:C0 -> nodo${actual.izquierda.id};`
+        }
+        if(actual.derecha) {
+            etiqueta += `${this.getBranchesDot(actual.derecha)}nodo${actual.id}:C1 -> nodo${actual.derecha.id};`
+        }
+        return etiqueta
+    }
+    getDot() {
+        return `digraph G{rankdir=TB;node [shape = record];${this.getBranchesDot(this.raiz)}}`
+    }
+}
+
 class AVL {
     constructor(){
         this.raiz = null;
@@ -136,7 +207,7 @@ class AVL {
         return etiqueta
     }
     getDot() {
-        return `digraph G{node[shape = record];${this.getBranchesDot(this.raiz)}}`
+        return `digraph G{rankdir=TB;node[shape = record];${this.getBranchesDot(this.raiz)}}`
     }
 }
 
@@ -415,6 +486,15 @@ function getClients() {
     return clients
 }
 
+function getActors() {
+    let actors = new AB()
+    try {
+        let actorsCharged = JSON.parse(localStorage.getItem('actorsCharged'))
+        actorsCharged.forEach(actor => actors.insert(new Actor(actor['dni'],actor['nombre_actor'],actor['correo'],actor['descripcion'])))
+    } catch (error) {}
+    return actors
+}
+
 function graphMovies() {
     let movies = getMovies()
     if(movies.raiz) {
@@ -434,6 +514,12 @@ function graphClients() {
 }
 
 function graphActors() {
+    let actors = getActors()
+    console.log(actors)
+    if(actors.raiz) {
+        d3.select('#graph-1').graphviz().width(document.getElementById('graph-1').clientWidth).height(document.getElementById('graph-1').clientHeight - 10).scale(0.5).renderDot(actors.getDot())
+        return
+    }
     d3.select('#graph-1').graphviz().renderDot('digraph g{}')
 }
 
