@@ -8,6 +8,14 @@ class NodoA {
     }
 }
 
+class NodoS {
+    constructor(indice,objeto) {
+        this.indice = indice
+        this.objeto = objeto
+        this.siguiente = null
+    }
+}
+
 class AVL {
     constructor(){
         this.raiz = null;
@@ -129,6 +137,40 @@ class AVL {
     }
     getDot() {
         return `digraph G{node[shape = record];${this.getBranchesDot(this.raiz)}}`
+    }
+}
+
+class LS {
+    constructor() {
+        this.primero = null
+        this.ultimo = null
+        this.indice = 0
+    }
+    add(nuevo) {
+        if(this.primero) {
+            this.ultimo.siguiente = new NodoS(this.indice,nuevo)
+            this.ultimo = this.ultimo.siguiente
+            this.indice ++
+            return
+        }
+        this.primero = new NodoS(this.indice,nuevo)
+        this.ultimo = this.primero
+        this.indice ++
+    }
+    getDot() {
+        let dot = 'digraph g{rankdir=LR;node[shape=box];'
+        let actual = this.primero
+        let ultimo = null
+        while(actual) {
+            dot += `nodo${actual.indice}[label="${actual.objeto.nombre_completo}"]`
+            if(ultimo) {
+                dot += `nodo${ultimo.indice} -> nodo${actual.indice};`
+            }
+            ultimo = actual
+            actual = actual.siguiente
+        }
+        dot += '}'
+        return dot
     }
 }
 
@@ -364,25 +406,39 @@ function getMovies() {
     return movies;
 }
 
+function getClients() {
+    let clients = new LS()
+    try {
+        let clientsCharged = JSON.parse(localStorage.getItem('clientsCharged'))
+        clientsCharged.forEach(client => clients.add(new Cliente(client['dpi'],client['nombre_completo'],client['nombre_usuario'],client['correo'],client['contrasenia'],client['telefono'])))
+    } catch (error) {}
+    return clients
+}
+
 function graphMovies() {
     let movies = getMovies()
     if(movies.raiz) {
-        d3.select('#graph-1').graphviz().width(document.getElementById('graph-1').clientWidth).height(document.getElementById('graph-1').clientHeight - 10).renderDot(movies.getDot())
+        d3.select('#graph-1').graphviz().width(document.getElementById('graph-1').clientWidth).height(document.getElementById('graph-1').clientHeight - 10).scale(0.5).renderDot(movies.getDot())
         return
     }
-    document.getElementById('graph-1').innerHTML = ''
+    d3.select('#graph-1').graphviz().renderDot('digraph g{}')
 }
 
 function graphClients() {
-    document.getElementById('graph-1').innerHTML = ''
+    let clients = getClients()
+    if(clients.primero) {
+        d3.select('#graph-1').graphviz().width(document.getElementById('graph-1').clientWidth).height(document.getElementById('graph-1').clientHeight - 10).scale(0.5).renderDot(clients.getDot())
+        return
+    }
+    d3.select('#graph-1').graphviz().renderDot('digraph g{}')
 }
 
 function graphActors() {
-    document.getElementById('graph-1').innerHTML = ''
+    d3.select('#graph-1').graphviz().renderDot('digraph g{}')
 }
 
 function graphCategories() {
-    document.getElementById('graph-1').innerHTML = ''
+    d3.select('#graph-1').graphviz().renderDot('digraph g{}')
 }
 
 function getGraphMovies() {
