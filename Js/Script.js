@@ -633,7 +633,7 @@ function getGraphMovies() {
     <button type="button" class="button1-t" onclick="getGraphClients()">Grafo Clientes</button>
     <button type="button" class="button1-t" onclick="getGraphActors()">Grafo Actores</button>
     <button type="button" class="button1-t" onclick="getGraphCategories()">Grafo Categorías</button>
-    <button type="button" class="button2" onclick="download()">Descargar Grafo</button>`
+    <button id="download" class="button2" onclick="downloadGraph()">Descargar Grafo</button>`
 }
 
 function getGraphClients() {
@@ -643,7 +643,7 @@ function getGraphClients() {
     <button type="button" class="button1-t-clicked">Grafo Clientes</button>
     <button type="button" class="button1-t" onclick="getGraphActors()">Grafo Actores</button>
     <button type="button" class="button1-t" onclick="getGraphCategories()">Grafo Categorías</button>
-    <button type="button" class="button2" onclick="download()">Descargar Grafo</button>`
+    <button id="download" class="button2" onclick="downloadGraph()">Descargar Grafo</button>`
 }
 
 function getGraphActors() {
@@ -653,7 +653,7 @@ function getGraphActors() {
     <button type="button" class="button1-t" onclick="getGraphClients()">Grafo Clientes</button>
     <button type="button" class="button1-t-clicked">Grafo Actores</button>
     <button type="button" class="button1-t" onclick="getGraphCategories()">Grafo Categorías</button>
-    <button type="button" class="button2" onclick="download()">Descargar Grafo</button>`
+    <button id="download" class="button2" onclick="downloadGraph()">Descargar Grafo</button>`
 }
 
 function getGraphCategories() {
@@ -663,7 +663,18 @@ function getGraphCategories() {
     <button type="button" class="button1-t" onclick="getGraphClients()">Grafo Clientes</button>
     <button type="button" class="button1-t" onclick="getGraphActors()">Grafo Actores</button>
     <button type="button" class="button1-t-clicked">Grafo Categorías</button>
-    <button type="button" class="button2" onclick="download()">Descargar Grafo</button>`
+    <button id="download" class="button2" onclick="downloadGraph()">Descargar Grafo</button>`
+}
+
+function downloadGraph() {
+    saveSvgAsPng(
+        document.getElementById('graph-1').children[0],
+        'Grafo.png',
+        {
+            scale: 10,
+            backgroundColor: '#FFFFFF'
+        }
+    );
 }
 
 function login() {
@@ -698,10 +709,6 @@ function login() {
     alert('Verifique sus credenciales')
     document.getElementById('user').value = ''
     document.getElementById('password').value = ''
-}
-
-function download() {
-
 }
 
 function getOffset(id) {
