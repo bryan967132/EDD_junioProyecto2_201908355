@@ -18,7 +18,7 @@
         <header id="header" class="header">
             <div class="contenedor">
                 <div class="barra">
-                    <a class="logo" onclick="">
+                    <a class="logo" onclick="header()">
                         <h1 id="userAdmin" class="logo__nombre no-margin centrar-texto">Wilfred Pérez</h1>
                     </a>
                     <nav class="navegacion">
@@ -89,7 +89,7 @@
                 <h2 class="seccion">Descarga De Estructuras</h2>
                 <div class="download-graph">
                     <div id="graph-1" class="graph-1"></div>
-                    <div id="button-group" class="button-group">
+                    <div id="button-group" class="button-group button-group-gap-1">
                         <button type="button" class="button1-t-clicked">Grafo Películas</button>
                         <button type="button" class="button1-t" onclick="getGraphClients()">Grafo Clientes</button>
                         <button type="button" class="button1-t" onclick="getGraphActors()">Grafo Actores</button>
@@ -102,12 +102,10 @@
         <footer>
         </footer>
         <script src="./Js/ScriptChooseFile.js"></script>
-        <script>
-            statusMovies()
-            statusClients()
-            statusActors()
-            statusCategories()
-            graphMovies()
-        </script>
+        <script>statusMovies()</script>
+        <script>statusClients()</script>
+        <script>statusActors()</script>
+        <script>statusCategories()</script>
+        <script>graphMovies()</script>
     </body>
 </html>

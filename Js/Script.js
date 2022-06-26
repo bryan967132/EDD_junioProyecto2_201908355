@@ -199,6 +199,7 @@ class AVL {
             console.log("Valor:",nodo.objeto.nombre_pelicula);
         }
     }
+    //Dot
     getBranchesDot(actual) {
         let etiqueta = ''
         if(!actual.izquierda && !actual.derecha) {
@@ -245,6 +246,77 @@ class LS {
             actual = actual.siguiente
         }
         return {status: false}
+    }
+    search(dpi) {
+        let actual = this.primero
+        while(actual) {
+            if(dpi == actual.objeto.dpi) {
+                return {status: true,nombre_completo: actual.objeto.nombre_completo}
+            }
+            actual = actual.siguiente
+        }
+        return {status: false}
+    }
+    sortMovieAZ() {
+        try{
+            this.sortMovieAZ1(this.primero)
+        } catch(error) {}
+    }
+    sortMovieAZ1(nodoI) {
+        if(nodoI.indice < this.ultimo.indice) {
+            this.sortMovieAZ2(nodoI,this.primero)
+            this.sortMovieAZ1(nodoI.siguiente)
+        }
+    }
+    sortMovieAZ2(nodoI,nodoX) {
+        if(nodoX.indice < this.ultimo.indice - nodoI.indice) {
+            if(nodoX.objeto.nombre_pelicula > nodoX.siguiente.objeto.nombre_pelicula) {
+                let temporal = nodoX.objeto
+                nodoX.objeto = nodoX.siguiente.objeto
+                nodoX.siguiente.objeto = temporal
+            }
+            this.sortMovieAZ2(nodoI,nodoX.siguiente)
+        }
+    }
+    sortMovieZA() {
+        try {
+            this.sortMovieZA1(this.primero)
+        } catch (error) {}
+    }
+    sortMovieZA1(nodoI) {
+        if(nodoI.indice < this.ultimo.indice) {
+            this.sortMovieZA2(nodoI,this.primero)
+            this.sortMovieZA1(nodoI.siguiente)
+        }
+    }
+    sortMovieZA2(nodoI,nodoX) {
+        if(nodoX.indice < this.ultimo.indice - nodoI.indice) {
+            if(nodoX.objeto.nombre_pelicula < nodoX.siguiente.objeto.nombre_pelicula) {
+                let temporal = nodoX.objeto
+                nodoX.objeto = nodoX.siguiente.objeto
+                nodoX.siguiente.objeto = temporal
+            }
+            this.sortMovieZA2(nodoI,nodoX.siguiente)
+        }
+    }
+    getHTML() {
+        let html = ''
+        let actual = this.primero
+        while(actual) {
+            html += `
+            <div class="pelicula">
+                <h2 class="titulo">${actual.objeto.nombre_pelicula}</h2>
+                <div class="descripcion">
+                    <p><strong>Descripcion</strong>:<br>${actual.objeto.descripcion}</p>
+                </div>
+                <div class="button-group button-group-gap-4 button-group-padding">
+                    <button type="button" class="button1">Información</button>
+                    <button type="button" class="button1">Alquilar Q.${actual.objeto.precio_Q}</button>
+                </div>
+            </div>`
+            actual = actual.siguiente
+        }
+        return html
     }
     getDot() {
         let dot = 'digraph g{rankdir=LR;node[shape=box];'
@@ -364,6 +436,7 @@ class Pelicula {
         this.descripcion = descripcion
         this.puntuacion_star = puntuacion_star
         this.precio_Q = precio_Q
+        this.comentarios = new LS()
     }
 }
 
@@ -709,6 +782,41 @@ function login() {
     alert('Verifique sus credenciales')
     document.getElementById('user').value = ''
     document.getElementById('password').value = ''
+}
+
+function getNameClient() {
+    let clientFind = getClients().search(dpi)
+    document.getElementById('userClient').innerHTML = clientFind.nombre_completo
+    return clientFind.nombre_completo
+}
+
+function getMoviesLS() {
+    let movies = new LS()
+    try {
+        let moviesCharged = JSON.parse(localStorage.getItem('moviesCharged'))
+        moviesCharged.forEach(movie => movies.add(new Pelicula(movie['id_pelicula'],movie['nombre_pelicula'],movie['descripcion'],movie['puntuacion_star'],movie['precio_Q'])))
+    } catch (error) {}
+    return movies
+}
+
+function movies() {
+    let movies = getMoviesLS()
+    if(movies.primero) {
+        if(alpha) {
+            alpha = false
+            movies.sortMovieAZ()
+            document.getElementById('asc-movies').innerHTML = `<button type="button" class="button-asc-desc-selected button-asc-desc-width">Ascendente</button>`
+            document.getElementById('desc-movies').innerHTML = `<button type="button" class="button-asc-desc button-asc-desc-width" onclick="movies()">Descendente</button>`
+        }else {
+            alpha = true
+            movies.sortMovieZA()
+            document.getElementById('asc-movies').innerHTML = `<button type="button" class="button-asc-desc button-asc-desc-width" onclick="movies()">Ascendente</button>`
+            document.getElementById('desc-movies').innerHTML = `<button type="button" class="button-asc-desc-selected button-asc-desc-width">Descendente</button>`
+        }
+        document.getElementById('catalogo-Peliculas').innerHTML = `<div class="peliculas">${movies.getHTML()}</div>`
+        return
+    }
+    document.getElementById('status-movies').innerHTML = '¡No hay Películas!'
 }
 
 function getOffset(id) {

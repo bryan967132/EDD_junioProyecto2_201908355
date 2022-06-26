@@ -12,8 +12,45 @@
         <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
         <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
         <script src="./Js/Script.js"></script>
+        <script>
+            try {
+                let url = window.location.href
+                var dpi = url.match(/dpi=\d+$/)[0].split('=')[1]
+                var alpha = true
+            } catch (error) {
+                window.location.href = 'index.html'
+            }
+        </script>
     </head>
     <body>
-        
+        <header id="header" class="header">
+            <div class="contenedor">
+                <div class="barra">
+                    <a class="logo" onclick="header()">
+                        <h1 id="userClient" class="logo__nombre no-margin centrar-texto"></h1>
+                    </a>
+                    <nav class="navegacion">
+                        <a class="navegacion__enlace" onclick="header()">Películas</a>
+                        <a class="navegacion__enlace" onclick="">Actores</a>
+                        <a class="navegacion__enlace" onclick="">Categorías</a>
+                        <a class="navegacion__enlace" onclick="">Cerrar Sesión</a>
+                    </nav>
+                    <script>getNameClient()</script>
+                </div>
+            </div>
+        </header>
+        <div class="bodyCharge">
+            <div class="padding-top-1">
+                <div class="title-button">
+                    <h2 class="seccion">Rentas</h2>
+                    <div id="asc-movies"></div>´
+                    <div id="desc-movies"></div>
+                </div>
+                <div id="catalogo-Peliculas">
+                    <h3 id="status-movies" class="msg"></h3>
+                </div>
+            </div>
+        </div>
+        <script>movies()</script>
     </body>
 </html>
