@@ -279,7 +279,7 @@ footer {
 .button-asc-desc-selected {
     height: 4rem;
     border-radius: 0.4rem;
-    background-color: rgb(39, 146, 253);
+    background-color: rgb(14, 134, 255);
     border: 0.2rem rgb(13, 110, 207) solid;
     color: var(--blanco);
     cursor: pointer;
