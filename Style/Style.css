@@ -191,6 +191,13 @@ footer {
     font-size: 1.8rem;
 }
 /*BUTTON*/
+@media (min-width: 768px) {
+    .button-group-h {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+    }
+}
 .button-group {
     display: flex;
     flex-direction: column;
