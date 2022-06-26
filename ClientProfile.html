@@ -31,7 +31,7 @@
                     </a>
                     <nav class="navegacion">
                         <a class="navegacion__enlace" onclick="header()">Películas</a>
-                        <a class="navegacion__enlace" onclick="">Actores</a>
+                        <a class="navegacion__enlace" onclick="actors()">Actores</a>
                         <a class="navegacion__enlace" onclick="">Categorías</a>
                         <a class="navegacion__enlace" onclick="">Cerrar Sesión</a>
                     </nav>
@@ -40,11 +40,11 @@
             </div>
         </header>
         <div class="bodyCharge">
-            <div class="padding-top-1">
+            <div id="rentas" class="padding-top-1">
                 <div class="title-button">
                     <h2 class="seccion">Rentas</h2>
                     <div class="button-group-h">
-                        <div id="asc-movies"></div>´
+                        <div id="asc-movies"></div>
                         <div id="desc-movies"></div>
                     </div>
                 </div>
@@ -52,10 +52,22 @@
                     <h3 id="status-movies" class="msg"></h3>
                 </div>
             </div>
-            <div class="paddint-top-2">
-
+            <div id="actors" class="padding-top-2">
+                <div class="title-button">
+                    <h2 class="seccion">Actores</h2>
+                    <div class="button-group-h">
+                        <div id="in"></div>
+                        <div id="pre"></div>
+                        <div id="post"></div>
+                    </div>
+                </div>
+                <div id="lista-actores">
+                    <h3 id="status-actors" class="msg"></h3>
+                </div>
             </div>
         </div>
+        <footer></footer>
         <script>movies()</script>
+        <script>actorS(true,false,false)</script>
     </body>
 </html>

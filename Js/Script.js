@@ -45,35 +45,59 @@ class AB {
         }
         return actual
     }
-    preorden() {
-        this.pre_orden(this.raiz)
+    inOrderHTML() {
+        return this.in_order(this.raiz)
     }
-    pre_orden(actual) {
+    in_order(actual) {
+        let html = ''
         if(actual) {
-            console.log('Valor:',actual.objeto)
-            this.pre_orden(actual.izquierda)
-            this.pre_orden(actual.derecha)
+            html += this.in_order(actual.izquierda)
+            html += `
+            <div class="actor">
+                <h2 class="titulo">${actual.objeto.nombre_actor}</h2>
+                <div class="descripcion">
+                    <p><strong>Descripcion</strong>:<br>${actual.objeto.descripcion}</p>
+                </div>
+            </div>`
+            html += this.in_order(actual.derecha)
         }
+        return html
     }
-    inorden() {
-        this.in_orden(this.raiz)
+    preOrderHTML() {
+        return this.pre_order(this.raiz)
     }
-    in_orden(actual) {
+    pre_order(actual) {
+        let html = ''
         if(actual) {
-            this.in_orden(actual.izquierda)
-            console.log('Valor:',actual.objeto)
-            this.in_orden(actual.derecha)
+            html += `
+            <div class="actor">
+                <h2 class="titulo">${actual.objeto.nombre_actor}</h2>
+                <div class="descripcion">
+                    <p><strong>Descripcion</strong>:<br>${actual.objeto.descripcion}</p>
+                </div>
+            </div>`
+            html += this.pre_order(actual.izquierda)
+            html += this.pre_order(actual.derecha)
         }
+        return html
     }
-    posorden() {
-        this.pos_orden(this.raiz)
+    postOrderHTML() {
+        return this.post_order(this.raiz)
     }
-    pos_orden(actual) {
+    post_order(actual) {
+        let html = ''
         if(actual) {
-            this.pos_orden(actual.izquierda)
-            this.pos_orden(actual.derecha)
-            console.log('Valor:',actual.objeto)
+            html += this.post_order(actual.izquierda)
+            html += this.post_order(actual.derecha)
+            html += `
+            <div class="actor">
+                <h2 class="titulo">${actual.objeto.nombre_actor}</h2>
+                <div class="descripcion">
+                    <p><strong>Descripcion</strong>:<br>${actual.objeto.descripcion}</p>
+                </div>
+            </div>`
         }
+        return html
     }
     getBranchesDot(actual) {
         let etiqueta = ''
@@ -813,10 +837,34 @@ function movies() {
             document.getElementById('asc-movies').innerHTML = `<button type="button" class="button-asc-desc button-asc-desc-width" onclick="movies()">Ascendente</button>`
             document.getElementById('desc-movies').innerHTML = `<button type="button" class="button-asc-desc-selected button-asc-desc-width">Descendente</button>`
         }
-        document.getElementById('catalogo-Peliculas').innerHTML = `<div class="peliculas">${movies.getHTML()}</div>`
+        document.getElementById('catalogo-Peliculas').innerHTML = `<div class="bloque">${movies.getHTML()}</div>`
         return
     }
     document.getElementById('status-movies').innerHTML = '¡No hay Películas!'
+}
+
+function actorS(inorder,preorder,postorder) {
+    let actors = getActors()
+    if(actors.raiz) {
+        if(inorder) {
+            document.getElementById('in').innerHTML = `<button type="button" class="button-asc-desc-selected button-in-pre-post-width">In Order</button>`
+            document.getElementById('pre').innerHTML = `<button type="button" class="button-asc-desc button-in-pre-post-width" onclick="actorS(false,true,false)">Pre Order</button>`
+            document.getElementById('post').innerHTML = `<button type="button" class="button-asc-desc button-in-pre-post-width" onclick="actorS(false,false,true)">Post Order</button>`
+            document.getElementById('lista-actores').innerHTML = `<div class="bloque">${actors.inOrderHTML()}</div>`
+        }else if(preorder) {
+            document.getElementById('in').innerHTML = `<button type="button" class="button-asc-desc button-in-pre-post-width" onclick="actorS(true,false,false)">In Order</button>`
+            document.getElementById('pre').innerHTML = `<button type="button" class="button-asc-desc-selected button-in-pre-post-width">Pre Order</button>`
+            document.getElementById('post').innerHTML = `<button type="button" class="button-asc-desc button-in-pre-post-width" onclick="actorS(false,false,true)">Post Order</button>`
+            document.getElementById('lista-actores').innerHTML = `<div class="bloque">${actors.preOrderHTML()}</div>`
+        }else if(postorder) {
+            document.getElementById('in').innerHTML = `<button type="button" class="button-asc-desc button-in-pre-post-width" onclick="actorS(true,false,false)">In Order</button>`
+            document.getElementById('pre').innerHTML = `<button type="button" class="button-asc-desc button-in-pre-post-width" onclick="actorS(false,true,false)">Pre Order</button>`
+            document.getElementById('post').innerHTML = `<button type="button" class="button-asc-desc-selected button-in-pre-post-width">Post Order</button>`
+            document.getElementById('lista-actores').innerHTML = `<div class="bloque">${actors.postOrderHTML()}</div>`
+        }
+        return
+    }
+    document.getElementById('status-actors').innerHTML = '¡No hay Actores!'
 }
 
 function getOffset(id) {
@@ -834,3 +882,5 @@ function getOffset(id) {
 function header() {scroll(0,0)}
 
 function structures() {scroll(0,getOffset('graphs').top)}
+
+function actors() {scroll(0,getOffset('actors').top)}

@@ -80,7 +80,12 @@ footer {
     padding: 10rem;
 }
 .padding-top-1 {
-    padding-top: 3rem;
+    padding-top: 15rem;
+}
+@media (min-width: 768px) {
+    .padding-top-1 {
+        padding-top: 3rem;
+    }
 }
 .padding-top-2 {
     padding-top: 9rem;
@@ -191,6 +196,11 @@ footer {
     font-size: 1.8rem;
 }
 /*BUTTON*/
+.button-group-h {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
 @media (min-width: 768px) {
     .button-group-h {
         display: flex;
@@ -262,12 +272,16 @@ footer {
 .button3:hover {
     background-color: var(--rojo2);
 }
+.button-in-pre-post-width,
 .button-asc-desc-width {
     width: 100%;
 }
 @media (min-width: 768px) {
     .button-asc-desc-width {
         width: 20rem;
+    }
+    .button-in-pre-post-width {
+        width: 15rem;
     }
 }
 .button-asc-desc {
@@ -399,37 +413,36 @@ footer {
         grid-template-columns: 2fr 1fr;
         column-gap: 2rem;
     }
-    .peliculas {
+    .bloque {
         display: flex;
         flex-direction: column;
         gap: 0.7rem;
-        max-height: 47.5rem;
-        min-height: 45rem;
+        height: 42rem;
         padding: 0.7rem;
         overflow: auto;
     }
-    .peliculas::-webkit-scrollbar {
+    .bloque::-webkit-scrollbar {
         -webkit-appearance: none;
     }
     
-    .peliculas::-webkit-scrollbar:vertical {
+    .bloque::-webkit-scrollbar:vertical {
         width:1rem;
     }
     
-    .peliculas::-webkit-scrollbar-button:increment,.peliculas::-webkit-scrollbar-button {
+    .bloque::-webkit-scrollbar-button:increment,.bloque::-webkit-scrollbar-button {
         display: none;
     } 
     
-    .peliculas::-webkit-scrollbar:horizontal {
+    .bloque::-webkit-scrollbar:horizontal {
         height: 1rem;
     }
     
-    .peliculas::-webkit-scrollbar-thumb {
+    .bloque::-webkit-scrollbar-thumb {
         background-color: var(--blanco);
         border-radius: 2rem;
     }
     
-    .peliculas::-webkit-scrollbar-track {
+    .bloque::-webkit-scrollbar-track {
         border-radius: 1rem;  
     }
     .pelicula {
@@ -438,6 +451,14 @@ footer {
         grid-template-columns: 1fr 4fr 2fr;
         column-gap: 1rem;
         align-items: center;
+        background-color: var(--backDark1);
+        border: var(--backDark2) 0.2rem solid;
+        border-radius: 1rem;
+    }
+    .actor {
+        display: flex;
+        padding: 1rem 3rem;
+        flex-direction: column;
         background-color: var(--backDark1);
         border: var(--backDark2) 0.2rem solid;
         border-radius: 1rem;
@@ -454,7 +475,6 @@ footer {
         column-gap: 2rem;
     }
 }
-
 /*GRAFOS*/
 .graph-1 {
     background: var(--blanco);
