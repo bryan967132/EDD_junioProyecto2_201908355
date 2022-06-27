@@ -54,7 +54,7 @@ class AB {
             html += this.in_order(actual.izquierda)
             html += `
             <div class="actor">
-                <h2 class="titulo">${actual.objeto.nombre_actor}</h2>
+                <h2 class="titulo">${actual.objeto.nombre_actor}<p class="id">${actual.objeto.dni}</p></h2>
                 <div class="descripcion">
                     <p><strong>Descripcion</strong>:<br>${actual.objeto.descripcion}</p>
                 </div>
@@ -71,7 +71,7 @@ class AB {
         if(actual) {
             html += `
             <div class="actor">
-                <h2 class="titulo">${actual.objeto.nombre_actor}</h2>
+                <h2 class="titulo">${actual.objeto.nombre_actor}<p class="id">${actual.objeto.dni}</p></h2>
                 <div class="descripcion">
                     <p><strong>Descripcion</strong>:<br>${actual.objeto.descripcion}</p>
                 </div>
@@ -91,7 +91,7 @@ class AB {
             html += this.post_order(actual.derecha)
             html += `
             <div class="actor">
-                <h2 class="titulo">${actual.objeto.nombre_actor}</h2>
+                <h2 class="titulo">${actual.objeto.nombre_actor}<p class="id">${actual.objeto.dni}</p></h2>
                 <div class="descripcion">
                     <p><strong>Descripcion</strong>:<br>${actual.objeto.descripcion}</p>
                 </div>
@@ -102,9 +102,9 @@ class AB {
     getBranchesDot(actual) {
         let etiqueta = ''
         if(!actual.izquierda && !actual.derecha) {
-            etiqueta = `nodo${actual.id} [label="${actual.objeto.nombre_actor}"];`
+            etiqueta = `nodo${actual.id}[label="${actual.objeto.dni}\\n${actual.objeto.nombre_actor}"];`
         }else {
-            etiqueta = `nodo${actual.id} [label="<C0> | ${actual.objeto.nombre_actor} | <C1>"];`
+            etiqueta = `nodo${actual.id}[label="<C0> | ${actual.objeto.dni}\\n${actual.objeto.nombre_actor} | <C1>"];`
         }
         if(actual.izquierda) {
             etiqueta += `${this.getBranchesDot(actual.izquierda)}nodo${actual.id}:C0 -> nodo${actual.izquierda.id};`
@@ -190,46 +190,58 @@ class AVL {
         nodo.derecha = this.rotateWithLeftChild(nodo.derecha)
         return this.rotateWithRightChild(nodo)
     }
-    //recorridos
-    preorden(){
-        this.pre_orden(this.raiz);
+    //inorder
+    inOrderHTML(){
+        return this.in_order(this.raiz);
     }
-    pre_orden(nodo){
+    in_order(nodo){
+        let html = ''
         if(nodo){
-            console.log("Valor:",nodo.objeto.nombre_pelicula);
-            this.pre_orden(nodo.izquierda);
-            this.pre_orden(nodo.derecha);
+            html += this.in_order(nodo.izquierda);
+            html += `
+            <div class="pelicula">
+                <h2 class="titulo">${nodo.objeto.nombre_pelicula}<p class="id">${nodo.objeto.id_pelicula}</p></h2>
+                <div class="descripcion">
+                    <p><strong>Descripcion</strong>:<br>${nodo.objeto.descripcion}</p>
+                </div>
+                <div class="button-group button-group-gap-4 button-group-padding">
+                    <button type="button" class="button1">Información</button>
+                    <button type="button" class="button1">Alquilar Q.${nodo.objeto.precio_Q}</button>
+                </div>
+            </div>`
+            html += this.in_order(nodo.derecha);    
         }
+        return html
     }
-    //inorden
-    inorden(){
-        this.in_orden(this.raiz);
+    inOrderReverseHTML(){
+        return this.in_order_reverse(this.raiz);
     }
-    in_orden(nodo){
+    in_order_reverse(nodo){
+        let html = ''
         if(nodo){
-            this.in_orden(nodo.izquierda);
-            console.log("Valor:",nodo.objeto.nombre_pelicula);
-            this.in_orden(nodo.derecha);    
+            html += this.in_order_reverse(nodo.derecha);
+            html += `
+            <div class="pelicula">
+                <h2 class="titulo">${nodo.objeto.nombre_pelicula}<p class="id">${nodo.objeto.id_pelicula}</p></h2>
+                <div class="descripcion">
+                    <p><strong>Descripcion</strong>:<br>${nodo.objeto.descripcion}</p>
+                </div>
+                <div class="button-group button-group-gap-4 button-group-padding">
+                    <button type="button" class="button1">Información</button>
+                    <button type="button" class="button1">Alquilar Q.${nodo.objeto.precio_Q}</button>
+                </div>
+            </div>`
+            html += this.in_order_reverse(nodo.izquierda);    
         }
-    }
-    //postorden
-    postorden(){
-        this.post_orden(this.raiz);
-    }
-    post_orden(nodo){
-        if(nodo){
-            this.post_orden(nodo.izquierda);
-            this.post_orden(nodo.derecha);
-            console.log("Valor:",nodo.objeto.nombre_pelicula);
-        }
+        return html
     }
     //Dot
     getBranchesDot(actual) {
         let etiqueta = ''
         if(!actual.izquierda && !actual.derecha) {
-            etiqueta = `nodo${actual.id} [label="${actual.objeto.nombre_pelicula}"];`
+            etiqueta = `nodo${actual.id}[label="${actual.objeto.id_pelicula}\\n${actual.objeto.nombre_pelicula}"];`
         }else {
-            etiqueta = `nodo${actual.id} [label="<C0> | ${actual.objeto.nombre_pelicula} | <C1>"];`
+            etiqueta = `nodo${actual.id}[label="<C0> | ${actual.objeto.id_pelicula}\\n${actual.objeto.nombre_pelicula} | <C1>"];`
         }
         if(actual.izquierda) {
             etiqueta += `${this.getBranchesDot(actual.izquierda)}nodo${actual.id}:C0 -> nodo${actual.izquierda.id};`
@@ -280,48 +292,6 @@ class LS {
             actual = actual.siguiente
         }
         return {status: false}
-    }
-    sortMovieAZ() {
-        try{
-            this.sortMovieAZ1(this.primero)
-        } catch(error) {}
-    }
-    sortMovieAZ1(nodoI) {
-        if(nodoI.indice < this.ultimo.indice) {
-            this.sortMovieAZ2(nodoI,this.primero)
-            this.sortMovieAZ1(nodoI.siguiente)
-        }
-    }
-    sortMovieAZ2(nodoI,nodoX) {
-        if(nodoX.indice < this.ultimo.indice - nodoI.indice) {
-            if(nodoX.objeto.nombre_pelicula > nodoX.siguiente.objeto.nombre_pelicula) {
-                let temporal = nodoX.objeto
-                nodoX.objeto = nodoX.siguiente.objeto
-                nodoX.siguiente.objeto = temporal
-            }
-            this.sortMovieAZ2(nodoI,nodoX.siguiente)
-        }
-    }
-    sortMovieZA() {
-        try {
-            this.sortMovieZA1(this.primero)
-        } catch (error) {}
-    }
-    sortMovieZA1(nodoI) {
-        if(nodoI.indice < this.ultimo.indice) {
-            this.sortMovieZA2(nodoI,this.primero)
-            this.sortMovieZA1(nodoI.siguiente)
-        }
-    }
-    sortMovieZA2(nodoI,nodoX) {
-        if(nodoX.indice < this.ultimo.indice - nodoI.indice) {
-            if(nodoX.objeto.nombre_pelicula < nodoX.siguiente.objeto.nombre_pelicula) {
-                let temporal = nodoX.objeto
-                nodoX.objeto = nodoX.siguiente.objeto
-                nodoX.siguiente.objeto = temporal
-            }
-            this.sortMovieZA2(nodoI,nodoX.siguiente)
-        }
     }
     getMoviesHTML() {
         let html = ''
@@ -848,20 +818,19 @@ function getMoviesLS() {
 }
 
 function movies() {
-    let movies = getMoviesLS()
-    if(movies.primero) {
+    let movies = getMovies()
+    if(movies.raiz) {
         if(alpha) {
             alpha = false
-            movies.sortMovieAZ()
             document.getElementById('asc-movies').innerHTML = `<button type="button" class="button-asc-desc-selected button-asc-desc-width">Ascendente</button>`
             document.getElementById('desc-movies').innerHTML = `<button type="button" class="button-asc-desc button-asc-desc-width" onclick="movies()">Descendente</button>`
+            document.getElementById('catalogo-Peliculas').innerHTML = `<div class="bloque">${movies.inOrderHTML()}</div>`
         }else {
             alpha = true
-            movies.sortMovieZA()
             document.getElementById('asc-movies').innerHTML = `<button type="button" class="button-asc-desc button-asc-desc-width" onclick="movies()">Ascendente</button>`
             document.getElementById('desc-movies').innerHTML = `<button type="button" class="button-asc-desc-selected button-asc-desc-width">Descendente</button>`
+            document.getElementById('catalogo-Peliculas').innerHTML = `<div class="bloque">${movies.inOrderReverseHTML()}</div>`
         }
-        document.getElementById('catalogo-Peliculas').innerHTML = `<div class="bloque">${movies.getMoviesHTML()}</div>`
         return
     }
     document.getElementById('status-movies').innerHTML = '¡No hay Películas!'
