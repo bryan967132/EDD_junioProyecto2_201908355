@@ -467,8 +467,8 @@ footer {
         border-radius: 1rem;
     }
     .categoria {
-        background-color: var(--backDark1);
-        border: var(--backDark2) 0.2rem solid;
+        background-color: var(--naranja);
+        border: var(--naranja1) 0.2rem solid;
         border-radius: 1rem;
     }
     .dos-columnas {
@@ -523,3 +523,4 @@ footer {
         gap: 8%;
     }
 }
+/*VENTANA MODAL*/
