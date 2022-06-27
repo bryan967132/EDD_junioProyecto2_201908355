@@ -323,7 +323,7 @@ class LS {
             this.sortMovieZA2(nodoI,nodoX.siguiente)
         }
     }
-    getHTML() {
+    getMoviesHTML() {
         let html = ''
         let actual = this.primero
         while(actual) {
@@ -337,6 +337,18 @@ class LS {
                     <button type="button" class="button1">Información</button>
                     <button type="button" class="button1">Alquilar Q.${actual.objeto.precio_Q}</button>
                 </div>
+            </div>`
+            actual = actual.siguiente
+        }
+        return html
+    }
+    getCategoriesHTML() {
+        let html = ''
+        let actual = this.primero
+        while(actual) {
+            html += `
+            <div class="categoria">
+                <h2 class="titulo">${actual.objeto.company}</h2>
             </div>`
             actual = actual.siguiente
         }
@@ -430,6 +442,17 @@ class THash {
             actual.acceso.printList()
             actual = actual.siguiente
         }
+    }
+    getHTML() {
+        let html = ''
+        let actual = this.primero
+        while(actual) {
+            if(actual.acceso.primero) {
+                html += actual.acceso.getCategoriesHTML()
+            }
+            actual = actual.siguiente
+        }
+        return html
     }
     getDot() {
         let actual = this.primero
@@ -800,6 +823,7 @@ function login() {
     if(clientFind.status) {
         document.getElementById('user').value = ''
         document.getElementById('password').value = ''
+        alert(`Bienvenido ${clientFind.nombre_completo}`)
         window.location.href = `ClientProfile.html?dpi=${clientFind.dpi}`
         return
     }
@@ -837,7 +861,7 @@ function movies() {
             document.getElementById('asc-movies').innerHTML = `<button type="button" class="button-asc-desc button-asc-desc-width" onclick="movies()">Ascendente</button>`
             document.getElementById('desc-movies').innerHTML = `<button type="button" class="button-asc-desc-selected button-asc-desc-width">Descendente</button>`
         }
-        document.getElementById('catalogo-Peliculas').innerHTML = `<div class="bloque">${movies.getHTML()}</div>`
+        document.getElementById('catalogo-Peliculas').innerHTML = `<div class="bloque">${movies.getMoviesHTML()}</div>`
         return
     }
     document.getElementById('status-movies').innerHTML = '¡No hay Películas!'
@@ -867,6 +891,11 @@ function actorS(inorder,preorder,postorder) {
     document.getElementById('status-actors').innerHTML = '¡No hay Actores!'
 }
 
+function categories() {
+    let categories = getCategories()
+    document.getElementById('lista-categorias').innerHTML = `<div class="bloque"><div class="mosaico">${categories.getHTML()}</div></div>`
+}
+
 function getOffset(id) {
     let elemento = document.getElementById(id)
     let _x = 0
@@ -879,8 +908,4 @@ function getOffset(id) {
     return {top: _y,left: _x}
 }
 
-function header() {scroll(0,0)}
-
-function structures() {scroll(0,getOffset('graphs').top)}
-
-function actors() {scroll(0,getOffset('actors').top)}
+function scroller(id) {scroll(0,getOffset(id).top)}

@@ -26,13 +26,13 @@
         <header id="header" class="header">
             <div class="contenedor">
                 <div class="barra">
-                    <a class="logo" onclick="header()">
+                    <a class="logo" onclick="scroller('header')">
                         <h1 id="userClient" class="logo__nombre no-margin centrar-texto"></h1>
                     </a>
                     <nav class="navegacion">
-                        <a class="navegacion__enlace" onclick="header()">Películas</a>
-                        <a class="navegacion__enlace" onclick="actors()">Actores</a>
-                        <a class="navegacion__enlace" onclick="">Categorías</a>
+                        <a class="navegacion__enlace" onclick="scroller('header')">Películas</a>
+                        <a class="navegacion__enlace" onclick="scroller('actors')">Actores</a>
+                        <a class="navegacion__enlace" onclick="scroller('categories')">Categorías</a>
                         <a class="navegacion__enlace" onclick="">Cerrar Sesión</a>
                     </nav>
                     <script>getNameClient()</script>
@@ -40,9 +40,9 @@
             </div>
         </header>
         <div class="bodyCharge">
-            <div id="rentas" class="padding-top-1">
+            <div id="movies" class="padding-top-1">
                 <div class="title-button">
-                    <h2 class="seccion">Rentas</h2>
+                    <h2 class="seccion">Películas</h2>
                     <div class="button-group-h">
                         <div id="asc-movies"></div>
                         <div id="desc-movies"></div>
@@ -65,9 +65,16 @@
                     <h3 id="status-actors" class="msg"></h3>
                 </div>
             </div>
+            <div id="categories" class="padding-top-2">
+                <h2 class="seccion">Categorías</h2>
+                <div id="lista-categorias">
+                    <h3 id="status-categories" class="msg"></h3>
+                </div>
+            </div>
         </div>
         <footer></footer>
         <script>movies()</script>
         <script>actorS(true,false,false)</script>
+        <script>categories()</script>
     </body>
 </html>

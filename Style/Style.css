@@ -463,6 +463,11 @@ footer {
         border: var(--backDark2) 0.2rem solid;
         border-radius: 1rem;
     }
+    .categoria {
+        background-color: var(--backDark1);
+        border: var(--backDark2) 0.2rem solid;
+        border-radius: 1rem;
+    }
     .dos-columnas {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -470,9 +475,13 @@ footer {
     }
     .tres-columnas {
         display: grid;
-        padding-bottom: 2rem;
         grid-template-columns: repeat(3, 1fr);
         column-gap: 2rem;
+    }
+    .mosaico {
+        display: grid;
+        grid-template-columns: repeat(6,1fr);
+        gap: 2rem;
     }
 }
 /*GRAFOS*/
@@ -485,7 +494,7 @@ footer {
 /*PELICULAS*/
 .titulo {
     font-size: 2rem;
-    color: var(--blanco);
+    color: var(--blanco1);
     text-align: center;
     line-height: normal;
 }
