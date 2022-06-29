@@ -148,7 +148,7 @@ footer {
     border-radius: 0.4rem;
     border: var(--gris) solid 0.1rem;
 }
-.input-coment {
+.input-comment {
     font-size: 1.4rem;
     color: var(--fontsecondary);
     width: 100%;
@@ -156,6 +156,7 @@ footer {
     height: 100%;
     border-radius: 0.4rem;
     border: var(--gris) solid 0.1rem;
+    padding: 0 1rem;
 }
 .input-text {
     padding-top: 2rem;
@@ -296,6 +297,20 @@ footer {
 }
 .button3:hover {
     background-color: var(--rojo2);
+}
+.button-comment {
+    height: 3rem;
+    width: 4.674rem;
+    border-radius: 0.4rem;
+    background: url('../SVG/Send1.svg') no-repeat;
+    border: 0 solid;
+    cursor: pointer;
+    font-size: 1.8rem;
+    padding-bottom: 0;
+    margin: 0;
+}
+.button-comment:hover {
+    background: url('../SVG/Send.svg') no-repeat;
 }
 .button-in-pre-post-width,
 .button-asc-desc-width {
@@ -559,7 +574,7 @@ footer {
     position: relative;
     background: var(--blanco);
     width: 60rem;
-    height: 80%;
+    height: 85%;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -613,9 +628,10 @@ footer {
 .vista-comentarios {
     width: 100%;
     height: 55%;
-    padding: 1rem 2rem;
+    padding: 1rem 3rem 2rem;
     display: grid;
     grid-template-rows: auto 1fr auto;
+    gap: 0.5rem;
 }
 .vista-comentarios .titulo {
     margin: 0;
@@ -626,14 +642,14 @@ footer {
 .comentar {
     height: auto;
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 2rem;
+    grid-template-columns: 1fr auto;
+    gap: 2rem
 }
 .comentarios {
     position: relative;
     padding: 0.7rem 1rem;
     overflow: auto;
-    height: 22vh;
+    height: 20vh;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -655,7 +671,7 @@ footer {
     background: var(--comment);
     color: var(--negro);
     width: fit-content;
-    max-width: 60%;
+    max-width: 75%;
     border-radius: 0.5rem;
     line-height: normal;
 }

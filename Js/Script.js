@@ -305,6 +305,18 @@ class LS {
         }
         return {status: false}
     }
+    getComment(indice) {
+        let actual = this.primero
+        while(actual) {
+            if(indice == actual.indice) {
+                return actual.objeto
+            }
+            actual = actual.siguiente
+        }
+    }
+    getSize() {
+        return this.indice
+    }
     getMoviesHTML() {
         let html = ''
         let actual = this.primero
@@ -459,13 +471,13 @@ class THash {
 }
 
 class Pelicula {
-    constructor(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q) {
+    constructor(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q,comentarios) {
         this.id_pelicula = id_pelicula
         this.nombre_pelicula = nombre_pelicula
         this.descripcion = descripcion
         this.puntuacion_star = puntuacion_star
         this.precio_Q = precio_Q
-        this.comentarios = new LS()
+        this.comentarios = comentarios
     }
 }
 
@@ -493,6 +505,14 @@ class Categoria {
     constructor(id_categoria,company) {
         this.id_categoria = id_categoria
         this.company = company
+    }
+}
+
+class Comentario {
+    constructor(id_pelicula,dpi_cliente,comentario) {
+        this.id_pelicula = id_pelicula
+        this.dpi_cliente = dpi_cliente
+        this.comentario = comentario
     }
 }
 
@@ -559,11 +579,11 @@ function deleteCategories() {
 function createMovie(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q) {
     if(localStorage.getItem('moviesCharged') != null) {
         let moviesCharged = JSON.parse(localStorage.getItem('moviesCharged'))
-        moviesCharged.push(JSON.parse(JSON.stringify(new Pelicula(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q))))
+        moviesCharged.push(JSON.parse(JSON.stringify(new Pelicula(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q,null))))
         localStorage.setItem('moviesCharged',JSON.stringify(moviesCharged))
         return
     }
-    localStorage.setItem('moviesCharged',JSON.stringify([JSON.parse(JSON.stringify(new Pelicula(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q)))]))
+    localStorage.setItem('moviesCharged',JSON.stringify([JSON.parse(JSON.stringify(new Pelicula(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q,null)))]))
 }
 
 function createClient(dpi,nombre_completo,nombre_usuario,correo,contrasenia,telefono) {
@@ -664,7 +684,15 @@ function getMovies() {
     let movies = new AVL()
     try {
         let moviesCharged = JSON.parse(localStorage.getItem('moviesCharged'))
-        moviesCharged.forEach(movie => movies.insert(new Pelicula(movie.id_pelicula,movie.nombre_pelicula,movie.descripcion,movie.puntuacion_star,movie.precio_Q)))
+        moviesCharged.forEach(
+            function(movie) {
+                let comments = new LS()
+                try {
+                    movie.comentarios.forEach(comment => comments.add(new Comentario(comment.id_pelicula,comment.dpi_cliente,comment.comentario)))
+                } catch (error) {}
+                movies.insert(new Pelicula(movie.id_pelicula,movie.nombre_pelicula,movie.descripcion,movie.puntuacion_star,movie.precio_Q,comments))
+            }
+        )
     } catch (error) {}
     return movies;
 }
@@ -904,20 +932,72 @@ function setStars(id,stars) {
     <div id="stars" class="stars">${getStars(stars)}</div>`
 }
 
-function getModalContent(id) {
-    let movieFinded = getMovies().searchMovie(id)
-    document.getElementById('titulomodal').innerHTML = `${movieFinded.nombre_pelicula}`
-    document.getElementById('descripcion').innerHTML = `<div class="m-descripcion barra_scroll"><strong>Descripción</strong>: ${movieFinded.descripcion}</div>`
-    setStars(id,movieFinded.puntuacion_star)
-    document.getElementById('alquiler').innerHTML = `
-    <div>
-        <button type="button" class="button1">Alquilar Q.200</button>
-    </div>`
+function getClientUser(dpi) {
+    return getClients().search(dpi).nombre_completo
+}
+
+function getMoviesCommentaries(id_pelicula) {
+    let moviesCharged = JSON.parse(localStorage.getItem('moviesCharged'))
+    let commentaries = null
+    moviesCharged.forEach(movie => id_pelicula == movie.id_pelicula ? commentaries = movie.comentarios : null)
+    return commentaries
+}
+
+function getCommentaries(id_pelicula,dpi_cliente) {
+    let comentarios1 = ''
+    let comentarios = getMoviesCommentaries(id_pelicula)
+    try {
+        comentarios.forEach(
+            function(comment) {
+                try {
+                let flex = 'flex-mi-comentario'
+                let user = 'Tú'
+                if(dpi_cliente != comment.dpi_cliente) {
+                    flex = 'flex-comentario'
+                    user = getClientUser(comment.dpi_cliente)
+                }
+                comentarios1 += `<div class="${flex}"><div class="comentario"><span class="user-comment">${user}</span>${comment.comentario}</div></div>`
+            } catch (error) {}
+        }
+        )
+    } catch (error) {}
+    document.getElementById('comentarios-1').innerHTML = comentarios1
+    document.getElementById('comentarios-1').scrollTop = document.getElementById('comentarios-1').scrollHeight
+}
+
+function createCommentary(id_pelicula,dpi_cliente,comentario) {
+    let movies = JSON.parse(localStorage.getItem('moviesCharged'))
+    movies.forEach(
+        function(movie) {
+            if(id_pelicula == movie.id_pelicula) {
+                if(movie.comentarios != null) {
+                    movie.comentarios.push(JSON.parse(JSON.stringify(new Comentario(id_pelicula,dpi_cliente,comentario))))
+                }else {
+                    movie.comentarios = [JSON.parse(JSON.stringify(new Comentario(id_pelicula,dpi_cliente,comentario)))]
+                }
+            }
+        }
+    )
+    localStorage.setItem('moviesCharged',JSON.stringify(movies))
+}
+
+function sendCommentary(id_pelicula,dpi_cliente) {
+    let comentario = document.getElementById('comment-text').value
+    if(comentario.replace(' ','') == '') return
+    createCommentary(id_pelicula,dpi_cliente,comentario)
+    getCommentaries(id_pelicula,dpi_cliente)
+    document.getElementById('comment-text').value = ''
 }
 
 function openInformation(id) {
     document.getElementsByClassName('fondo_transparente')[0].style.display = 'block'
-    getModalContent(id)
+    let movieFinded = getMovies().searchMovie(id)
+    document.getElementById('titulomodal').innerHTML = `${movieFinded.nombre_pelicula}`
+    document.getElementById('descripcion').innerHTML = `<div class="m-descripcion barra_scroll"><strong>Descripción</strong>: ${movieFinded.descripcion}</div>`
+    setStars(id,movieFinded.puntuacion_star)
+    document.getElementById('alquiler').innerHTML = `<div><button type="button" class="button1">Alquilar Q.200</button></div>`
+    getCommentaries(id,dpi)
+    document.getElementById('button-comment').innerHTML = `<button type="button" class="button-comment" onclick="sendCommentary(${id},${dpi})"></button>`
 }
 
 function getOffset(id) {
