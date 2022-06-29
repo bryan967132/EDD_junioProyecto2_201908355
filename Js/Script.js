@@ -190,6 +190,18 @@ class AVL {
         nodo.derecha = this.rotateWithLeftChild(nodo.derecha)
         return this.rotateWithRightChild(nodo)
     }
+    searchMovie(id) {
+        return this.search_Movie(id,this.raiz)
+    }
+    search_Movie(id,nodo) {
+        if(id < nodo.objeto.id_pelicula) {
+            return this.search_Movie(id,nodo.izquierda)
+        }
+        if(id > nodo.objeto.id_pelicula) {
+            return this.search_Movie(id,nodo.derecha)
+        }
+        return nodo.objeto
+    }   
     //inorder
     inOrderHTML(){
         return this.in_order(this.raiz);
@@ -205,7 +217,7 @@ class AVL {
                     <p><strong>Descripcion</strong>:<br>${nodo.objeto.descripcion}</p>
                 </div>
                 <div class="button-group button-group-gap-4 button-group-padding">
-                    <button type="button" class="button1">Información</button>
+                    <button type="button" class="button1" onclick="openInformation(${nodo.objeto.id_pelicula})">Información</button>
                     <button type="button" class="button1">Alquilar Q.${nodo.objeto.precio_Q}</button>
                 </div>
             </div>`
@@ -227,7 +239,7 @@ class AVL {
                     <p><strong>Descripcion</strong>:<br>${nodo.objeto.descripcion}</p>
                 </div>
                 <div class="button-group button-group-gap-4 button-group-padding">
-                    <button type="button" class="button1">Información</button>
+                <button type="button" class="button1" onclick="openInformation(${nodo.objeto.id_pelicula})">Información</button>
                     <button type="button" class="button1">Alquilar Q.${nodo.objeto.precio_Q}</button>
                 </div>
             </div>`
@@ -590,8 +602,8 @@ function chargeMovies() {
         let reader = new FileReader()
         reader.readAsText(file,'UTF-8')
         reader.onload = function(evt) {
-            let movies = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
-            movies.forEach(movie => createMovie(movie['id_pelicula'],movie['nombre_pelicula'],movie['descripcion'],movie['puntuacion_star'],movie['precio_Q']))
+            let movies = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result})).data)
+            movies.forEach(movie => createMovie(movie.id_pelicula,movie.nombre_pelicula,movie.descripcion,movie.puntuacion_star,movie.precio_Q))
             statusMovies()
             alert('Clientes Cargados')
         }
@@ -606,8 +618,8 @@ function chargeClients() {
         let reader = new FileReader()
         reader.readAsText(file,'UTF-8')
         reader.onload = function(evt) {
-            let clients = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
-            clients.forEach(client => createClient(client['dpi'],client['nombre_completo'],client['nombre_usuario'],client['correo'],client['contrasenia'],client['telefono']))
+            let clients = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result})).data)
+            clients.forEach(client => createClient(client.dpi,client.nombre_completo,client.nombre_usuario,client.correo,client.contrasenia,client.telefono))
             statusClients()
             alert('Clientes Cargados')
         }
@@ -622,8 +634,8 @@ function chargeActors() {
         let reader = new FileReader()
         reader.readAsText(file,'UTF-8')
         reader.onload = function(evt) {
-            let actors = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
-            actors.forEach(actor => createActor(actor['dni'],actor['nombre_actor'],actor['correo'],actor['descripcion']))
+            let actors = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result})).data)
+            actors.forEach(actor => createActor(actor.dni,actor.nombre_actor,actor.correo,actor.descripcion))
             statusActors()
             alert('Actores Cargados')
         }
@@ -638,8 +650,8 @@ function chargeCategories() {
         let reader = new FileReader()
         reader.readAsText(file,'UTF-8')
         reader.onload = function(evt) {
-            let categories = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result}))['data'])
-            categories.forEach(category => createCategory(category['id_categoria'],category['company']))
+            let categories = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result})).data)
+            categories.forEach(category => createCategory(category.id_categoria,category.company))
             statusCategories()
             alert('Actores Cargados')
         }
@@ -652,7 +664,7 @@ function getMovies() {
     let movies = new AVL()
     try {
         let moviesCharged = JSON.parse(localStorage.getItem('moviesCharged'))
-        moviesCharged.forEach(movie => movies.insert(new Pelicula(movie['id_pelicula'],movie['nombre_pelicula'],movie['descripcion'],movie['puntuacion_star'],movie['precio_Q'])))
+        moviesCharged.forEach(movie => movies.insert(new Pelicula(movie.id_pelicula,movie.nombre_pelicula,movie.descripcion,movie.puntuacion_star,movie.precio_Q)))
     } catch (error) {}
     return movies;
 }
@@ -661,7 +673,7 @@ function getClients() {
     let clients = new LS()
     try {
         let clientsCharged = JSON.parse(localStorage.getItem('clientsCharged'))
-        clientsCharged.forEach(client => clients.add(new Cliente(client['dpi'],client['nombre_completo'],client['nombre_usuario'],client['correo'],client['contrasenia'],client['telefono'])))
+        clientsCharged.forEach(client => clients.add(new Cliente(client.dpi,client.nombre_completo,client.nombre_usuario,client.correo,client.contrasenia,client.telefono)))
     } catch (error) {}
     return clients
 }
@@ -670,7 +682,7 @@ function getActors() {
     let actors = new AB()
     try {
         let actorsCharged = JSON.parse(localStorage.getItem('actorsCharged'))
-        actorsCharged.forEach(actor => actors.insert(new Actor(actor['dni'],actor['nombre_actor'],actor['correo'],actor['descripcion'])))
+        actorsCharged.forEach(actor => actors.insert(new Actor(actor.dni,actor.nombre_actor,actor.correo,actor.descripcion)))
     } catch (error) {}
     return actors
 }
@@ -679,7 +691,7 @@ function getCategories() {
     let categories = new THash(20)
     try {
         let categoriesCharged = JSON.parse(localStorage.getItem('categoriesCharged'))
-        categoriesCharged.forEach(category => categories.insert(new Categoria(category['id_categoria'],category['company'])))
+        categoriesCharged.forEach(category => categories.insert(new Categoria(category.id_categoria,category.company)))
     } catch (error) {}
     return categories
 }
@@ -804,17 +816,10 @@ function login() {
 
 function getNameClient() {
     let clientFind = getClients().search(dpi)
-    document.getElementById('userClient').innerHTML = clientFind.nombre_completo
-    return clientFind.nombre_completo
-}
-
-function getMoviesLS() {
-    let movies = new LS()
     try {
-        let moviesCharged = JSON.parse(localStorage.getItem('moviesCharged'))
-        moviesCharged.forEach(movie => movies.add(new Pelicula(movie['id_pelicula'],movie['nombre_pelicula'],movie['descripcion'],movie['puntuacion_star'],movie['precio_Q'])))
+        document.getElementById('userClient').innerHTML = clientFind.nombre_completo
     } catch (error) {}
-    return movies
+    return clientFind.nombre_completo
 }
 
 function movies() {
@@ -862,7 +867,57 @@ function actorS(inorder,preorder,postorder) {
 
 function categories() {
     let categories = getCategories()
-    document.getElementById('lista-categorias').innerHTML = `<div class="bloque"><div class="mosaico">${categories.getHTML()}</div></div>`
+    if(categories.llenos > 0) {
+        document.getElementById('lista-categorias').innerHTML = `<div class="bloque"><div class="mosaico">${categories.getHTML()}</div></div>`
+        return
+    }
+    document.getElementById('status-categories').innerHTML = '¡No hay Categorías de Películas!'
+}
+
+function getStars(stars_c) {
+    let stars = ''
+    for(let i = 1; i <= stars_c; i ++) {
+        stars += '<svg version="1.1" id="Layer_1" width = "25" height = "25" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 501.28 501.28" style="enable-background:new 0 0 501.28 501.28;" xml:space="preserve"><g><polygon style="fill:#FFCD00;" points="501.28,194.37 335.26,159.33 250.64,12.27 250.64,419.77 405.54,489.01 387.56,320.29"/><polygon style="fill:#FFDA44;" points="166.02,159.33 0,194.37 113.72,320.29 95.74,489.01 250.64,419.77 250.64,12.27"/></g></svg>'
+    }
+    for(let i = 1; i <= 5 - stars_c; i ++) {
+        stars += '<svg version="1.1" id="Layer_1" width = "25" height = "25" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 501.28 501.28" style="enable-background:new 0 0 501.28 501.28;" xml:space="preserve"><g><polygon style="fill:#8f8f8f;" points="501.28,194.37 335.26,159.33 250.64,12.27 250.64,419.77 405.54,489.01 387.56,320.29"/><polygon style="fill:#9f9f9f;" points="166.02,159.33 0,194.37 113.72,320.29 95.74,489.01 250.64,419.77 250.64,12.27"/></g></svg>'
+    }
+    return stars
+}
+
+function setStars(id,stars) {
+    stars = parseInt(stars)
+    let moviesCharged = JSON.parse(localStorage.getItem('moviesCharged'))
+    moviesCharged.forEach(
+        function(movie) {
+            movie.id_pelicula == id ? movie.puntuacion_star = stars : undefined
+        }
+    )
+    localStorage.setItem('moviesCharged',JSON.stringify(moviesCharged))
+    document.getElementById('puntuacion').innerHTML = `
+    <div>
+        <button type="button" class="button2" onclick="setStars(${id},document.getElementById('stars-num').value)">Modificar Puntuación</button>
+    </div>
+    <div>
+        <input id="stars-num" type="number" class="input-star" min="0" max="5" value="${stars}">
+    </div>
+    <div id="stars" class="stars">${getStars(stars)}</div>`
+}
+
+function getModalContent(id) {
+    let movieFinded = getMovies().searchMovie(id)
+    document.getElementById('titulomodal').innerHTML = `${movieFinded.nombre_pelicula}`
+    document.getElementById('descripcion').innerHTML = `<div class="m-descripcion barra_scroll"><strong>Descripción</strong>: ${movieFinded.descripcion}</div>`
+    setStars(id,movieFinded.puntuacion_star)
+    document.getElementById('alquiler').innerHTML = `
+    <div>
+        <button type="button" class="button1">Alquilar Q.200</button>
+    </div>`
+}
+
+function openInformation(id) {
+    document.getElementsByClassName('fondo_transparente')[0].style.display = 'block'
+    getModalContent(id)
 }
 
 function getOffset(id) {
