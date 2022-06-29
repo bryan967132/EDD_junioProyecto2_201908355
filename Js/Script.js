@@ -807,49 +807,6 @@ function downloadGraph() {
     );
 }
 
-function login() {
-    let user = document.getElementById('user').value
-    let pass = document.getElementById('password').value
-    let admin = document.getElementById('rol').checked
-    if(user.replace(' ','') == '' || pass.replace(' ','') == '') {
-        alert('Todos los campos son obligatorios')
-        document.getElementById('rol').checked = false
-        return
-    }
-    if(admin) {
-        if(user == 'EDD' && pass == '123') {
-            document.getElementById('user').value = ''
-            document.getElementById('password').value = ''
-            window.location.href = 'AdminProfile.html'
-            alert('Bienvenido Wilfred Perez')
-            return
-        }
-        alert('Verifique sus credenciales')
-        document.getElementById('user').value = ''
-        document.getElementById('password').value = ''
-        return
-    }
-    let clientFind = getClients().match(user,pass)
-    if(clientFind.status) {
-        document.getElementById('user').value = ''
-        document.getElementById('password').value = ''
-        alert(`Bienvenido ${clientFind.nombre_completo}`)
-        window.location.href = `ClientProfile.html?dpi=${clientFind.dpi}`
-        return
-    }
-    alert('Verifique sus credenciales')
-    document.getElementById('user').value = ''
-    document.getElementById('password').value = ''
-}
-
-function getNameClient() {
-    let clientFind = getClients().search(dpi)
-    try {
-        document.getElementById('userClient').innerHTML = clientFind.nombre_completo
-    } catch (error) {}
-    return clientFind.nombre_completo
-}
-
 function movies() {
     let movies = getMovies()
     if(movies.raiz) {
@@ -998,6 +955,62 @@ function openInformation(id) {
     document.getElementById('alquiler').innerHTML = `<div><button type="button" class="button1">Alquilar Q.200</button></div>`
     getCommentaries(id,dpi)
     document.getElementById('button-comment').innerHTML = `<button type="button" class="button-comment" onclick="sendCommentary(${id},${dpi})"></button>`
+}
+
+function login() {
+    let user = document.getElementById('user').value
+    let pass = document.getElementById('password').value
+    let admin = document.getElementById('rol').checked
+    if(user.replace(' ','') == '' || pass.replace(' ','') == '') {
+        alert('Todos los campos son obligatorios')
+        document.getElementById('rol').checked = false
+        return
+    }
+    if(admin) {
+        if(user == 'EDD' && pass == '123') {
+            document.getElementById('user').value = ''
+            document.getElementById('password').value = ''
+            document.getElementById('rol').checked = false
+            localStorage.setItem('2354168452525',JSON.stringify({'active': true}))
+            window.location.href = 'AdminProfile.html'
+            alert('Bienvenido Wilfred Perez')
+            return
+        }
+        alert('Verifique sus credenciales')
+        document.getElementById('user').value = ''
+        document.getElementById('password').value = ''
+        return
+    }
+    let clientFind = getClients().match(user,pass)
+    if(clientFind.status) {
+        document.getElementById('user').value = ''
+        document.getElementById('password').value = ''
+        localStorage.setItem(clientFind.dpi.toString(),JSON.stringify({'active': true}))
+        window.location.href = `ClientProfile.html?dpi=${clientFind.dpi}`
+        alert(`Bienvenido ${clientFind.nombre_completo}`)
+        return
+    }
+    alert('Verifique sus credenciales')
+    document.getElementById('user').value = ''
+    document.getElementById('password').value = ''
+}
+
+function logout() {
+    localStorage.removeItem(dpi.toString())
+    window.location.href = 'index.html'
+}
+
+function logoutA() {
+    localStorage.removeItem('2354168452525')
+    window.location.href = 'index.html'
+}
+
+function getNameClient() {
+    let clientFind = getClients().search(dpi)
+    try {
+        document.getElementById('userClient').innerHTML = clientFind.nombre_completo
+    } catch (error) {}
+    return clientFind.nombre_completo
 }
 
 function getOffset(id) {
