@@ -108,6 +108,7 @@
                 'click',
                 function() {
                     document.getElementsByClassName('fondo_transparente')[0].style.display = 'none'
+                    document.getElementById('comment-text').value = ''
                 }
             )
             window.addEventListener(
@@ -115,6 +116,7 @@
                 function(event) {
                     if(event.keyCode == 27) {
                         document.getElementsByClassName('fondo_transparente')[0].style.display = 'none'
+                        document.getElementById('comment-text').value = ''
                     }
                 },
                 false

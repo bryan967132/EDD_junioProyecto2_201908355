@@ -497,7 +497,7 @@ footer {
     }
     .actor {
         display: flex;
-        padding: 1rem 3rem;
+        padding: 2rem 3rem 1rem;
         flex-direction: column;
         background-color: var(--backDark1);
         border: var(--backDark2) 0.2rem solid;
@@ -507,6 +507,7 @@ footer {
         background-color: var(--naranja);
         border: var(--naranja1) 0.2rem solid;
         border-radius: 1rem;
+        padding: 1.5rem;
     }
     .dos-columnas {
         display: grid;
@@ -537,6 +538,7 @@ footer {
     color: var(--blanco1);
     text-align: center;
     line-height: normal;
+    margin: 0;
 }
 .titulo .id {
     font-size: 1.2rem;

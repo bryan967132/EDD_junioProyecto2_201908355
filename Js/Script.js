@@ -40,7 +40,7 @@ class AB {
         }
         if(nuevo.dni > actual.objeto.dni) {
             actual.derecha = this.add(nuevo,actual.derecha)
-        }else {
+        }else if(nuevo.dni < actual.objeto.dni) {
             actual.izquierda = this.add(nuevo,actual.izquierda)
         }
         return actual
@@ -285,6 +285,16 @@ class LS {
         this.ultimo = this.primero
         this.indice ++
     }
+    verifyId(id) {
+        let actual = this.primero
+        while(actual) {
+            if(id == actual.objeto.id_categoria) {
+                return true
+            }
+            actual = actual.siguiente
+        }
+        return false
+    }
     match(user,pass) {
         let actual = this.primero
         while(actual) {
@@ -405,11 +415,13 @@ class THash {
     }
     insert(nuevo) {
         let nuevoHash = this.search(nuevo.id_categoria % this.size)
-        nuevoHash.acceso.add(nuevo)
-        this.llenos ++
-        if(this.isrehashing) {
-            if(this.llenos / this.size >= 0.75) {
-                this.hashing(5)
+        if(!nuevoHash.acceso.verifyId(nuevo.id_categoria)) {
+            nuevoHash.acceso.add(nuevo)
+            this.llenos ++
+            if(this.isrehashing) {
+                if(this.llenos / this.size >= 0.75) {
+                    this.hashing(5)
+                }
             }
         }
     }
