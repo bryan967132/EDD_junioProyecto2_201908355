@@ -218,7 +218,7 @@ class AVL {
                 </div>
                 <div class="button-group button-group-gap-4 button-group-padding">
                     <button type="button" class="button1" onclick="openInformation(${nodo.objeto.id_pelicula})">Información</button>
-                    <button type="button" class="button1">Alquilar Q.${nodo.objeto.precio_Q}</button>
+                    <button type="button" class="button1" onclick="rentMovie('${nodo.objeto.nombre_pelicula}')">Alquilar Q.${nodo.objeto.precio_Q}</button>
                 </div>
             </div>`
             html += this.in_order(nodo.derecha);    
@@ -240,7 +240,7 @@ class AVL {
                 </div>
                 <div class="button-group button-group-gap-4 button-group-padding">
                 <button type="button" class="button1" onclick="openInformation(${nodo.objeto.id_pelicula})">Información</button>
-                    <button type="button" class="button1">Alquilar Q.${nodo.objeto.precio_Q}</button>
+                    <button type="button" class="button1" onclick="rentMovie('${nodo.objeto.nombre_pelicula}')">Alquilar Q.${nodo.objeto.precio_Q}</button>
                 </div>
             </div>`
             html += this.in_order_reverse(nodo.izquierda);    
@@ -967,6 +967,10 @@ function openInformation(id) {
     document.getElementById('alquiler').innerHTML = `<div><button type="button" class="button1">Alquilar Q.200</button></div>`
     getCommentaries(id,dpi)
     document.getElementById('button-comment').innerHTML = `<button type="button" class="button-comment" onclick="sendCommentary(${id},${dpi})"></button>`
+}
+
+function rentMovie(pelicula) {
+    console.log(getClientUser(dpi),pelicula)
 }
 
 function login() {

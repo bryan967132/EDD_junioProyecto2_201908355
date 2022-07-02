@@ -462,6 +462,7 @@ footer {
         display: grid;
         grid-template-columns: 2fr 1fr;
         column-gap: 2rem;
+        margin-bottom: 4rem;
     }
     .bloque {
         display: flex;
@@ -827,4 +828,7 @@ footer {
     .button-block {
         width: 100%;
     }
+}
+.height-graphs {
+    height: 20rem
 }
