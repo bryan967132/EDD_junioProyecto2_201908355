@@ -24,6 +24,39 @@ class NodoS {
     }
 }
 
+class NodoD {
+    constructor(id_data,objeto) {
+        this.id_data = id_data
+        this.objeto = objeto
+        this.siguiente = null
+    }
+}
+
+class NodoN {
+    constructor(num) {
+        this.hash = Sha256.hash(num.toString())
+    }
+}
+
+class NodoM {
+    constructor(id,nivel) {
+        this.id = id
+        this.nivel = nivel
+        this.hash = null
+        this.izquierda = null
+        this.derecha = null
+        this.data = null
+    }
+}
+
+class NodoBC {
+    constructor(objeto) {
+        this.objeto = objeto
+        this.siguiente = null
+        this.anterior = null
+    }
+}
+
 class AB {
     constructor() {
         this.raiz = null
@@ -482,6 +515,194 @@ class THash {
     }
 }
 
+class LstDt {
+    constructor() {
+        this.primero = null
+        this.id = 0
+    }
+    insert(nuevo) {
+        this.primero = this.addToDataList(nuevo,this.primero)
+    }
+    addToDataList(nuevo,nodo) {
+        if(!nodo) {
+            this.id ++
+            return new NodoD(this.id,nuevo)
+        }
+        nodo.siguiente = this.addToDataList(nuevo,nodo.siguiente)
+        return nodo
+    }
+    getHead() {
+        if(!this.primero) return null
+        let primero = this.primero
+        this.primero = this.primero.siguiente
+        primero.siguiente = null
+        return primero
+    }
+    getNData() {
+        return this.id
+    }
+}
+
+class Merkle {
+    constructor() {
+        this.raiz = null
+        this.id = 0
+        this.list_data = new LstDt()
+    }
+    insert(nuevo) {
+        this.list_data.insert(nuevo)
+    }
+    buildTree() {
+        if(this.list_data.primero) {
+            let tmp = this.list_data.getNData()
+        if(!this.isPowerOfTwo(tmp)) {
+            tmp = this.getNextPowerOfTwo(tmp)
+        }
+        if(tmp == 1) {
+            this.niveles = 1
+            tmp = 2
+        }
+        for(let i = this.list_data.getNData(); i < tmp; i ++) {
+            this.list_data.insert(new NodoN(i*100))
+        }
+        this.niveles = this.getPowerOfTwo(tmp)
+        this.buildBranches()
+        }
+    }
+    buildBranches() {
+        this.raiz = this.addNodesBranch(this.raiz,0)
+    }
+    addNodesBranch(nodo,nivel) {
+        if(!nodo) {
+            this.id ++
+            if(nivel < this.niveles) {
+                nodo = new NodoM(this.id,nivel)
+                nodo.izquierda = this.addNodesBranch(nodo.izquierda,nivel + 1)
+                nodo.derecha = this.addNodesBranch(nodo.derecha,nivel + 1)
+                nodo.hash = Sha256.hash(`${nodo.izquierda.hash}${nodo.derecha.hash}`)
+            }else if(nivel == this.niveles) {
+                nodo = this.addLeafNode(nodo,nivel)
+            }
+        }
+        return nodo
+    }
+    addLeafNode(nodo,nivel) {
+        nodo = new NodoM(this.id,nivel)
+        let head = this.list_data.getHead()
+        if(head) {
+            nodo.hash = head.objeto.hash
+            nodo.data = {id: head.id_data,transaccion: head.objeto}
+        }
+        return nodo
+    }
+    isPowerOfTwo(n) {
+        while(n % 2 == 0) {
+            n /= 2
+        }
+        if(n == 1) return true
+        return false
+    }
+    getPowerOfTwo(n) {
+        let power = 0
+        while(n % 2 == 0) {
+            n /= 2
+            power ++
+        }
+        return power
+    }
+    getNextPowerOfTwo(n) {
+        if(this.isPowerOfTwo(n)) return n
+        return this.getNextPowerOfTwo(n + 1)
+    }
+    getBranchesDot(actual) {
+        let etiqueta = ''
+        if(actual && actual.hash != 'null') {
+            if(!actual.izquierda && !actual.derecha) {
+                etiqueta = `\n\tnodo${actual.id}[label="${actual.hash}"];`
+            }else {
+                etiqueta = `\n\tnodo${actual.id}[label="<C0> | ${actual.hash} | <C1>"];`
+            }
+            if(actual.izquierda) {
+                etiqueta += `${this.getBranchesDot(actual.izquierda)}\n\tnodo${actual.id}:C0 -> nodo${actual.izquierda.id};`
+            }
+            if(actual.derecha) {
+                etiqueta += `${this.getBranchesDot(actual.derecha)}\n\tnodo${actual.id}:C1 -> nodo${actual.derecha.id};`
+            }
+            if(actual.data) {
+                if(actual.data.transaccion.cliente) {
+                    etiqueta += `\n\tnodo${actual.data.transaccion.hash}[label="T${actual.data.id}"];\n\tnodo${actual.id} -> nodo${actual.data.transaccion.hash};`
+                }else {
+                    etiqueta += `\n\tnodo${actual.data.transaccion.hash}[label="${(actual.data.id - 1)*100}"];\n\tnodo${actual.id} -> nodo${actual.data.transaccion.hash};`
+                }
+            }
+        }
+        return etiqueta
+    }
+    getDot() {
+        return `digraph G{\n\trankdir=TB;\n\tnode[shape=record fontsize=10 height=0.1];${this.getBranchesDot(this.raiz)}\n}`
+    }
+}
+
+class Blockchain {
+    constructor() {
+        this.primero = null
+        this.ultimo = null
+    }
+    insert(nuevo) {
+        if(this.primero) {
+            this.ultimo.siguiente = new NodoBC(nuevo)
+            this.ultimo.siguiente.anterior = this.ultimo
+            this.ultimo = this.ultimo.siguiente
+            this.ultimo.objeto.prev_hash = this.ultimo.anterior.objeto.hash
+            let proof = this.proofOfWork(this.ultimo.objeto,this.ultimo.anterior.objeto.nonce + 1)
+            this.ultimo.objeto.nonce = proof.nonce
+            console.log(this.ultimo.objeto.nonce)
+            this.ultimo.objeto.hash = proof.hash
+            return
+        }
+        this.primero = new NodoBC(nuevo)
+        this.primero.objeto.prev_hash = '00'
+        let proof = this.proofOfWork(this.primero.objeto,0)
+        this.primero.objeto.nonce = proof.nonce
+        console.log(this.primero.objeto.nonce)
+        this.primero.objeto.hash = proof.hash
+        this.ultimo = this.primero
+    }
+    proofOfWork(nodo,n) {
+        console.log(nodo)
+        let hash
+        do {
+            hash = Sha256.hash(`${nodo.index}${nodo.timestamp}${nodo.prev_hash}${nodo.root_merkle}${n}`)
+            if(hash.toString().charAt(0) == 0 && hash.toString().charAt(1) == 0) {
+                return {nonce: n,hash: hash}
+            }
+            n ++
+        } while(true)
+    }
+    printBlockchain() {
+        let actual = this.primero
+        while(actual) {
+            console.log(actual.objeto)
+            actual = actual.siguiente
+        }
+    }
+    getDot() {
+        let actual = this.primero
+        let dot = 'digraph G {\n\trankdir=LR;\n\tnode[shape=box style=rounded];'
+        let o
+        while(actual) {
+            o = actual.objeto
+            dot += `\n\tnodo${actual.objeto.index}[label=<\n\t\t<table border="0" cellborder="0 " cellspacing="0">\n\t\t\t<tr><td height="230">Bloque ${o.index}<br ALIGN="LEFT"/>Hash: ${o.hash}<br ALIGN="LEFT"/>Prev: ${o.prev_hash}<br ALIGN="LEFT"/>Root Merkle: ${o.root_merkle}<br ALIGN="LEFT"/>Transacciones: [${o.getData()}<br ALIGN="LEFT"/> ]<br ALIGN="LEFT"/>Fecha: ${o.timestamp}<br ALIGN="LEFT"/></td></tr>\n\t\t</table>\n\t>];`
+            if(actual.anterior) {
+                dot += `\n\tnodo${actual.anterior.objeto.index} -> nodo${actual.objeto.index};`
+            }
+            actual = actual.siguiente
+        }
+        dot += '\n}'
+        return dot
+    }
+}
+
 class Pelicula {
     constructor(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q,comentarios) {
         this.id_pelicula = id_pelicula
@@ -525,6 +746,38 @@ class Comentario {
         this.id_pelicula = id_pelicula
         this.dpi_cliente = dpi_cliente
         this.comentario = comentario
+    }
+}
+
+class Transaccion {
+    constructor(bloque,cliente,pelicula) {
+        this.bloque = bloque
+        this.cliente = cliente
+        this.pelicula = pelicula
+        this.hash = Sha256.hash(`${cliente} - ${pelicula}`)
+    }
+}
+
+class Bloque {
+    constructor(index,timestamp,data,root_merkle) {
+        this.index = index
+        this.timestamp = timestamp
+        this.data = data
+        this.nonce = null
+        this.prev_hash = null
+        this.root_merkle = root_merkle
+        this.hash = null
+    }
+    getData() {
+        let data = ''
+        if(this.data.length > 0) {
+            let limite = this.data.length - 1
+            this.data.forEach(function(d,index) {
+                data += `<br ALIGN="LEFT"/>         ${d}`
+                if(index < limite) data += ','
+            })
+        }
+        return `${data}`
     }
 }
 
