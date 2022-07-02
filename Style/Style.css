@@ -828,7 +828,15 @@ footer {
     .button-block {
         width: 100%;
     }
+    .titulo-blockchain {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
 }
 .height-graphs {
     height: 20rem
+}
+.tiempo {
+    margin: auto 0;
 }

@@ -241,7 +241,7 @@ class AVL {
     }
     in_order(nodo){
         let html = ''
-        if(nodo){
+        if(nodo && nodo.objeto.disponible){
             html += this.in_order(nodo.izquierda);
             html += `
             <div class="pelicula">
@@ -263,7 +263,7 @@ class AVL {
     }
     in_order_reverse(nodo){
         let html = ''
-        if(nodo){
+        if(nodo && nodo.objeto.disponible){
             html += this.in_order_reverse(nodo.derecha);
             html += `
             <div class="pelicula">
@@ -704,13 +704,14 @@ class Blockchain {
 }
 
 class Pelicula {
-    constructor(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q,comentarios) {
+    constructor(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q,comentarios,disponible) {
         this.id_pelicula = id_pelicula
         this.nombre_pelicula = nombre_pelicula
         this.descripcion = descripcion
         this.puntuacion_star = puntuacion_star
         this.precio_Q = precio_Q
         this.comentarios = comentarios
+        this.disponible = disponible
     }
 }
 
@@ -844,11 +845,11 @@ function deleteCategories() {
 function createMovie(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q) {
     if(localStorage.getItem('moviesCharged') != null) {
         let moviesCharged = JSON.parse(localStorage.getItem('moviesCharged'))
-        moviesCharged.push(JSON.parse(JSON.stringify(new Pelicula(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q,null))))
+        moviesCharged.push(JSON.parse(JSON.stringify(new Pelicula(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q,null,true))))
         localStorage.setItem('moviesCharged',JSON.stringify(moviesCharged))
         return
     }
-    localStorage.setItem('moviesCharged',JSON.stringify([JSON.parse(JSON.stringify(new Pelicula(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q,null)))]))
+    localStorage.setItem('moviesCharged',JSON.stringify([JSON.parse(JSON.stringify(new Pelicula(id_pelicula,nombre_pelicula,descripcion,puntuacion_star,precio_Q,null,true)))]))
 }
 
 function createClient(dpi,nombre_completo,nombre_usuario,correo,contrasenia,telefono) {
@@ -955,7 +956,7 @@ function getMovies() {
                 try {
                     movie.comentarios.forEach(comment => comments.add(new Comentario(comment.id_pelicula,comment.dpi_cliente,comment.comentario)))
                 } catch (error) {}
-                movies.insert(new Pelicula(movie.id_pelicula,movie.nombre_pelicula,movie.descripcion,movie.puntuacion_star,movie.precio_Q,comments))
+                movies.insert(new Pelicula(movie.id_pelicula,movie.nombre_pelicula,movie.descripcion,movie.puntuacion_star,movie.precio_Q,comments,movie.disponible))
             }
         )
     } catch (error) {}
@@ -1217,13 +1218,153 @@ function openInformation(id) {
     document.getElementById('titulomodal').innerHTML = `${movieFinded.nombre_pelicula}`
     document.getElementById('descripcion').innerHTML = `<div class="m-descripcion barra_scroll"><strong>Descripción</strong>: ${movieFinded.descripcion}</div>`
     setStars(id,movieFinded.puntuacion_star)
-    document.getElementById('alquiler').innerHTML = `<div><button type="button" class="button1">Alquilar Q.200</button></div>`
+    document.getElementById('alquiler').innerHTML = `<div><button type="button" class="button1" onclick="rentMovie('${movieFinded.nombre_pelicula}')">Alquilar Q.200</button></div>`
     getCommentaries(id,dpi)
     document.getElementById('button-comment').innerHTML = `<button type="button" class="button-comment" onclick="sendCommentary(${id},${dpi})"></button>`
 }
 
-function rentMovie(pelicula) {
-    console.log(getClientUser(dpi),pelicula)
+function getBlockchain() {
+    let blockchainC = JSON.parse(localStorage.getItem('bloques'))
+    let blockchain = new Blockchain()
+    blockchainC.forEach(block => blockchain.insert(new Bloque(block.index,block.timestamp,block.data,block.root_merkle)))
+    return blockchain
+}
+
+function getMerkleTree() {
+    let merkleTree = new Merkle()
+    try {
+        let data = JSON.parse(localStorage.getItem('transacciones'))
+        data.forEach(d => merkleTree.insert(new Transaccion(bloques.length,d.cliente,d.pelicula)))
+    } catch (error) {}
+    return merkleTree
+}
+
+function getDataBlock(bloque) {
+    let tr = JSON.parse(localStorage.getItem('transacciones'))
+    let tra = []
+    tr.forEach(function(t) {
+        if(bloque == t.bloque) {
+            tra.push(`${t.cliente} - ${t.pelicula}`)
+        }
+    })
+    return tra
+}
+
+function getDateTime() {
+    let date = new Date()
+    const map = {
+        dd: String(date.getDate()).padStart(2,'0'),
+        mm: String(date.getMonth() + 1).padStart(2,'0'),
+        yyyy: date.getFullYear(),
+        hh: String(date.getHours()).padStart(2,'0'),
+        mi: String(date.getMinutes()).padStart(2,'0'),
+        ss: String(date.getSeconds()).padStart(2,'0')
+    }
+    return `${map.dd}-${map.mm}-${map.yyyy}-::${map.hh}:${map.mi}:${map.ss}`
+}
+
+function createBlock() {
+    console.log('ENTRA A CREAR BLOQUE')
+    try {
+        let tr = JSON.parse(localStorage.getItem('transacciones'))
+        let merkle
+        if(tr.length > 0) {
+            tr.forEach(t => delete t.hash)
+            localStorage.setItem('transacciones',JSON.stringify(tr))
+            merkle = getMerkleTree()
+            merkle.buildTree()
+        }else {
+            merkle = new Merkle()
+            merkle.insert(new NodoN(0))
+            merkle.buildTree()
+        }
+        let nuevoBloque = new Bloque(bloques.length,getDateTime(),getDataBlock(bloques.length),merkle.raiz.hash)
+        delete nuevoBloque.nonce
+        delete nuevoBloque.prev_hash
+        delete nuevoBloque.hash
+        bloques.push(JSON.parse(JSON.stringify(nuevoBloque)))
+        localStorage.setItem('bloques',JSON.stringify(bloques))
+        getGraphBlockchain()
+    } catch (error) {}
+}
+
+function rentMovie(movie) {
+    let client = getClientUser(dpi)
+    if(localStorage.getItem('transacciones') != null) {
+        let transacciones = JSON.parse(localStorage.getItem('transacciones'))
+        transacciones.push(JSON.parse(JSON.stringify(new Transaccion(bloques.length,client,movie))))
+        localStorage.setItem('transacciones',JSON.stringify(transacciones))
+        getGraphMerkleTree()
+        getBlockchain()
+        return
+    }
+    localStorage.setItem('transacciones',JSON.stringify([JSON.parse(JSON.stringify(new Transaccion(bloques.length,client,movie)))]))
+    getGraphMerkleTree()
+}
+
+function dimElement(id) {
+    let element = document.getElementById(id)
+    return {width: element.clientWidth,height: element.clientHeight}
+}
+
+function getGraphBlockchain() {
+    try {
+        let blockchain = getBlockchain()
+        if(blockchain.primero) {
+            d3.select('#graph-blockchain').graphviz().width(dimElement('graph-blockchain').width).height(dimElement('graph-blockchain').height).scale(0.5).renderDot(blockchain.getDot())
+        }
+    } catch (error) {}
+}
+
+function getGraphMerkleTree() {
+    try {
+        let merkle = getMerkleTree()
+        if(merkle.list_data.primero) {
+            merkle.buildTree()
+            d3.select('#graph-merkle-tree').graphviz().width(dimElement('graph-merkle-tree').width).height(dimElement('graph-merkle-tree').height).scale(0.5).renderDot(merkle.getDot())
+        }
+    } catch (error) {}
+}
+
+function Thread(value,iniciado) {
+    document.getElementById('temporizador').innerHTML = `Nuevo bloque en: ${value} s`
+    getGraphMerkleTree()
+    if(value == localStorage.getItem('valueInit') && iniciado) {
+        createBlock()
+    }
+    if(value > 1) {
+        localStorage.setItem('value',value)
+        setTimeout(function() {Thread(value - 1,false)},1000)
+    }else {
+        setTimeout(function() {Thread(localStorage.getItem('valueInit'),true)},1000)
+    }
+}
+
+function start() {
+    if(localStorage.getItem('value') == null) {
+        Thread(localStorage.getItem('valueInit'),false)
+    }else {
+        Thread(localStorage.getItem('value'),false)
+    }
+}
+
+function changeTime() {
+    if(document.getElementById('valueNumberInit').value.toString().replace(' ','') != '') {
+        localStorage.setItem('valueInit',document.getElementById('valueNumberInit').value)
+        window.location.reload()
+    }
+}
+
+function resetB() {
+    localStorage.removeItem('value')
+    localStorage.removeItem('bloques')
+    localStorage.removeItem('transacciones')
+    window.location.reload()
+}
+
+function resetT() {
+    localStorage.removeItem('value')
+    window.location.reload()
 }
 
 function login() {
@@ -1295,3 +1436,17 @@ function getOffset(id) {
 }
 
 function scroller(id) {scroll(0,getOffset(id).top)}
+
+if(localStorage.getItem('valueInit') == null) {
+    localStorage.setItem('valueInit',300)
+}
+
+if(localStorage.getItem('bloques') == null) {
+    localStorage.setItem('bloques',JSON.stringify([]))
+}
+
+if(localStorage.getItem('transacciones') == null) {
+    localStorage.setItem('transacciones',JSON.stringify([]))
+}
+
+const bloques = JSON.parse(localStorage.getItem('bloques'))

@@ -11,8 +11,8 @@
         <script src="https://d3js.org/d3.v5.min.js"></script>
         <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
         <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+        <script src="./Js/SHA-256.js"></script>
         <script src="./Js/Script.js"></script>
-        <!--<script src="./node_modules/save-svg-as-png/lib/saveSvgAsPng.js"></script>-->
         <script src="./Js/saveSvgAsPng.js"></script>
         <script>
             if(localStorage.getItem('2354168452525') == null) {
@@ -105,21 +105,24 @@
                 </div>
             </div>
             <div id="blockchain" class="padding-top-2">
-                <h2 class="seccion">Blockchain</h2>
+                <div class="titulo-blockchain">
+                    <h2 class="seccion">Blockchain</h2>
+                    <h3 id="temporizador" class="msg tiempo"></h3>
+                </div>
                 <div class="flex-rows-blockchain">
                     <div id="time" class="flex-row-time">
                         <div class="change-time">
                             <div class="input-new-time">
-                                <input type="number" min="0" class="input-star">
+                                <input id="valueNumberInit" type="number" min="0" class="input-star">
                                 <h3 class="msg">Segundos</h3>
                             </div>
                             <div class="button-change">
-                                <button type="button" class="button2">Modificar Tiempo</button>
+                                <button type="button" class="button2" onclick="changeTime()">Modificar Tiempo</button>
                             </div>
                         </div>
                         <div class="block-generate">
                             <div class="button-block">
-                                <button type="button" class="button1">Generar Bloque</button>
+                                <button type="button" class="button1" onclick="createBlock()">Generar Bloque</button>
                             </div>
                         </div>
                     </div>
@@ -128,12 +131,19 @@
                 </div>
             </div>
         </div>
-        <footer></footer>
+        <footer>
+            <button type="button" class="button3" onclick="resetT()">Resetear Tiempo</button>
+            <button type="button" class="button3" onclick="resetB()">Resetear Blockchain</button>
+        </footer>
         <script src="./Js/ScriptChooseFile.js"></script>
         <script>statusMovies()</script>
         <script>statusClients()</script>
         <script>statusActors()</script>
         <script>statusCategories()</script>
         <script>graphMovies()</script>
+        <script>start()</script>
+        <script>getGraphMerkleTree()</script>
+        <script>getGraphBlockchain()</script>
+        <script>document.getElementById('valueNumberInit').value = localStorage.getItem('valueInit')</script>
     </body>
 </html>
