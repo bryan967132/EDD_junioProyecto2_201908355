@@ -783,12 +783,12 @@ footer {
 .flex-rows-blockchain {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
 }
 .flex-row-time {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    padding-bottom: 0.5rem;
 }
 .change-time {
     display: flex;
@@ -834,8 +834,19 @@ footer {
         justify-content: space-between;
     }
 }
-.height-graphs {
-    height: 20rem
+.graph-2 {
+    height: 100%;
+    border-radius: 1rem 1rem 0 0;
+    background: var(--blanco);
+    border: var(--blancoH) solid 0.5rem;
+    height: 22rem
+}
+.graph-3 {
+    height: 100%;
+    border-radius: 0 0 1rem 1rem;
+    background: var(--blanco);
+    border: var(--blancoH) solid 0.5rem;
+    height: 22rem
 }
 .tiempo {
     margin: auto 0;

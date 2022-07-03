@@ -241,19 +241,21 @@ class AVL {
     }
     in_order(nodo){
         let html = ''
-        if(nodo && nodo.objeto.disponible){
+        if(nodo){
             html += this.in_order(nodo.izquierda);
-            html += `
-            <div class="pelicula">
-                <h2 class="titulo">${nodo.objeto.nombre_pelicula}<p class="id">${nodo.objeto.id_pelicula}</p></h2>
-                <div class="descripcion">
-                    <p><strong>Descripcion</strong>:<br>${nodo.objeto.descripcion}</p>
-                </div>
-                <div class="button-group button-group-gap-4 button-group-padding">
-                    <button type="button" class="button1" onclick="openInformation(${nodo.objeto.id_pelicula})">Información</button>
-                    <button type="button" class="button1" onclick="rentMovie('${nodo.objeto.nombre_pelicula}')">Alquilar Q.${nodo.objeto.precio_Q}</button>
-                </div>
-            </div>`
+            if(nodo.objeto.disponible) {
+                html += `
+                <div class="pelicula">
+                    <h2 class="titulo">${nodo.objeto.nombre_pelicula}<p class="id">${nodo.objeto.id_pelicula}</p></h2>
+                    <div class="descripcion">
+                        <p><strong>Descripcion</strong>:<br>${nodo.objeto.descripcion}</p>
+                    </div>
+                    <div class="button-group button-group-gap-4 button-group-padding">
+                        <button type="button" class="button1" onclick="openInformation(${nodo.objeto.id_pelicula})">Información</button>
+                        <button type="button" class="button1" onclick="rentMovie('${nodo.objeto.nombre_pelicula}',${nodo.objeto.id_pelicula})">Alquilar Q.${nodo.objeto.precio_Q}</button>
+                    </div>
+                </div>`
+            }
             html += this.in_order(nodo.derecha);    
         }
         return html
@@ -263,19 +265,21 @@ class AVL {
     }
     in_order_reverse(nodo){
         let html = ''
-        if(nodo && nodo.objeto.disponible){
+        if(nodo){
             html += this.in_order_reverse(nodo.derecha);
-            html += `
-            <div class="pelicula">
-                <h2 class="titulo">${nodo.objeto.nombre_pelicula}<p class="id">${nodo.objeto.id_pelicula}</p></h2>
-                <div class="descripcion">
-                    <p><strong>Descripcion</strong>:<br>${nodo.objeto.descripcion}</p>
-                </div>
-                <div class="button-group button-group-gap-4 button-group-padding">
-                <button type="button" class="button1" onclick="openInformation(${nodo.objeto.id_pelicula})">Información</button>
-                    <button type="button" class="button1" onclick="rentMovie('${nodo.objeto.nombre_pelicula}')">Alquilar Q.${nodo.objeto.precio_Q}</button>
-                </div>
-            </div>`
+            if(nodo.objeto.disponible) {
+                html += `
+                <div class="pelicula">
+                    <h2 class="titulo">${nodo.objeto.nombre_pelicula}<p class="id">${nodo.objeto.id_pelicula}</p></h2>
+                    <div class="descripcion">
+                        <p><strong>Descripcion</strong>:<br>${nodo.objeto.descripcion}</p>
+                    </div>
+                    <div class="button-group button-group-gap-4 button-group-padding">
+                    <button type="button" class="button1" onclick="openInformation(${nodo.objeto.id_pelicula})">Información</button>
+                        <button type="button" class="button1" onclick="rentMovie('${nodo.objeto.nombre_pelicula}',${nodo.objeto.id_pelicula})">Alquilar Q.${nodo.objeto.precio_Q}</button>
+                    </div>
+                </div>`
+            }
             html += this.in_order_reverse(nodo.izquierda);    
         }
         return html
@@ -1078,14 +1082,24 @@ function movies() {
     if(movies.raiz) {
         if(alpha) {
             alpha = false
-            document.getElementById('asc-movies').innerHTML = `<button type="button" class="button-asc-desc-selected button-asc-desc-width">Ascendente</button>`
-            document.getElementById('desc-movies').innerHTML = `<button type="button" class="button-asc-desc button-asc-desc-width" onclick="movies()">Descendente</button>`
-            document.getElementById('catalogo-Peliculas').innerHTML = `<div class="bloque">${movies.inOrderHTML()}</div>`
+            let inorderhtml = movies.inOrderHTML()
+            if(inorderhtml != '') {
+                document.getElementById('asc-movies').innerHTML = `<button type="button" class="button-asc-desc-selected button-asc-desc-width">Ascendente</button>`
+                document.getElementById('desc-movies').innerHTML = `<button type="button" class="button-asc-desc button-asc-desc-width" onclick="movies()">Descendente</button>`
+                document.getElementById('catalogo-Peliculas').innerHTML = `<div class="bloque">${inorderhtml}</div>`
+            }else {
+                document.getElementById('status-movies').innerHTML = '¡No hay Películas Disponibles!'
+            }
         }else {
             alpha = true
-            document.getElementById('asc-movies').innerHTML = `<button type="button" class="button-asc-desc button-asc-desc-width" onclick="movies()">Ascendente</button>`
-            document.getElementById('desc-movies').innerHTML = `<button type="button" class="button-asc-desc-selected button-asc-desc-width">Descendente</button>`
-            document.getElementById('catalogo-Peliculas').innerHTML = `<div class="bloque">${movies.inOrderReverseHTML()}</div>`
+            let inroderreversehtml = movies.inOrderReverseHTML()
+            if(inroderreversehtml != '') {
+                document.getElementById('asc-movies').innerHTML = `<button type="button" class="button-asc-desc button-asc-desc-width" onclick="movies()">Ascendente</button>`
+                document.getElementById('desc-movies').innerHTML = `<button type="button" class="button-asc-desc-selected button-asc-desc-width">Descendente</button>`
+                document.getElementById('catalogo-Peliculas').innerHTML = `<div class="bloque">${inroderreversehtml}</div>`
+            }else {
+                document.getElementById('status-movies').innerHTML = '¡No hay Películas Disponibles!'
+            }
         }
         return
     }
@@ -1218,7 +1232,7 @@ function openInformation(id) {
     document.getElementById('titulomodal').innerHTML = `${movieFinded.nombre_pelicula}`
     document.getElementById('descripcion').innerHTML = `<div class="m-descripcion barra_scroll"><strong>Descripción</strong>: ${movieFinded.descripcion}</div>`
     setStars(id,movieFinded.puntuacion_star)
-    document.getElementById('alquiler').innerHTML = `<div><button type="button" class="button1" onclick="rentMovie('${movieFinded.nombre_pelicula}')">Alquilar Q.200</button></div>`
+    document.getElementById('alquiler').innerHTML = `<div><button type="button" class="button1" onclick="rentMovie('${movieFinded.nombre_pelicula}',${movieFinded.id_pelicula},${true})">Alquilar Q.200</button></div>`
     getCommentaries(id,dpi)
     document.getElementById('button-comment').innerHTML = `<button type="button" class="button-comment" onclick="sendCommentary(${id},${dpi})"></button>`
 }
@@ -1288,18 +1302,44 @@ function createBlock() {
     } catch (error) {}
 }
 
-function rentMovie(movie) {
+function changeDisponible(id) {
+    let moviesCharged = JSON.parse(localStorage.getItem('moviesCharged'))
+    moviesCharged.forEach(function(movie) { movie.id_pelicula == id ? movie.disponible = false : undefined })
+    localStorage.setItem('moviesCharged',JSON.stringify(moviesCharged))
+}
+
+function rentMovie(movie,id,info) {
     let client = getClientUser(dpi)
+    changeDisponible(id)
     if(localStorage.getItem('transacciones') != null) {
         let transacciones = JSON.parse(localStorage.getItem('transacciones'))
         transacciones.push(JSON.parse(JSON.stringify(new Transaccion(bloques.length,client,movie))))
         localStorage.setItem('transacciones',JSON.stringify(transacciones))
-        getGraphMerkleTree()
-        getBlockchain()
+        if(alpha) {
+            alpha = false
+        }else {
+            alpha = true
+        }
+        if(info) {
+            document.getElementsByClassName('fondo_transparente')[0].style.display = 'none'
+            document.getElementById('comment-text').value = ''
+        }
+        movies()
+        alert('Película Alquilada')
         return
     }
     localStorage.setItem('transacciones',JSON.stringify([JSON.parse(JSON.stringify(new Transaccion(bloques.length,client,movie)))]))
-    getGraphMerkleTree()
+    if(alpha) {
+        alpha = false
+    }else {
+        alpha = true
+    }
+    if(info) {
+        document.getElementsByClassName('fondo_transparente')[0].style.display = 'none'
+        document.getElementById('comment-text').value = ''
+    }
+    movies()
+    alert('Película Alquilada')
 }
 
 function dimElement(id) {
@@ -1311,7 +1351,7 @@ function getGraphBlockchain() {
     try {
         let blockchain = getBlockchain()
         if(blockchain.primero) {
-            d3.select('#graph-blockchain').graphviz().width(dimElement('graph-blockchain').width).height(dimElement('graph-blockchain').height).scale(0.5).renderDot(blockchain.getDot())
+            d3.select('#graph-blockchain').graphviz().width(dimElement('graph-blockchain').width).height(dimElement('graph-blockchain').height).scale(0.48).renderDot(blockchain.getDot())
         }
     } catch (error) {}
 }
@@ -1356,10 +1396,12 @@ function changeTime() {
 }
 
 function resetB() {
-    localStorage.removeItem('value')
-    localStorage.removeItem('bloques')
-    localStorage.removeItem('transacciones')
-    window.location.reload()
+    if(prompt('¿Desea Reiniciar el Blochain?') == 'y') {
+        localStorage.removeItem('value')
+        localStorage.removeItem('bloques')
+        localStorage.removeItem('transacciones')
+        window.location.reload()
+    }
 }
 
 function resetT() {
