@@ -559,18 +559,18 @@ class Merkle {
     buildTree() {
         if(this.list_data.primero) {
             let tmp = this.list_data.getNData()
-        if(!this.isPowerOfTwo(tmp)) {
-            tmp = this.getNextPowerOfTwo(tmp)
-        }
-        if(tmp == 1) {
-            this.niveles = 1
-            tmp = 2
-        }
-        for(let i = this.list_data.getNData(); i < tmp; i ++) {
-            this.list_data.insert(new NodoN(i*100))
-        }
-        this.niveles = this.getPowerOfTwo(tmp)
-        this.buildBranches()
+            if(!this.isPowerOfTwo(tmp)) {
+                tmp = this.getNextPowerOfTwo(tmp)
+            }
+            if(tmp == 1) {
+                this.niveles = 1
+                tmp = 2
+            }
+            for(let i = this.list_data.getNData(); i < tmp; i ++) {
+                this.list_data.insert(new NodoN(i*100))
+            }
+            this.niveles = this.getPowerOfTwo(tmp)
+            this.buildBranches()
         }
     }
     buildBranches() {
@@ -671,7 +671,6 @@ class Blockchain {
         this.ultimo = this.primero
     }
     proofOfWork(nodo,n) {
-        console.log(nodo)
         let hash
         do {
             hash = Sha256.hash(`${nodo.index}${nodo.timestamp}${nodo.prev_hash}${nodo.root_merkle}${n}`)
