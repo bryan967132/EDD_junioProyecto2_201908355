@@ -1396,12 +1396,11 @@ function changeTime() {
 }
 
 function resetB() {
-    if(prompt('¿Desea Reiniciar el Blochain?') == 'y') {
-        localStorage.removeItem('value')
-        localStorage.removeItem('bloques')
-        localStorage.removeItem('transacciones')
-        window.location.reload()
-    }
+    localStorage.removeItem('transacciones')
+    localStorage.removeItem('valueInit')
+    localStorage.removeItem('bloques')
+    localStorage.removeItem('value')
+    window.location.reload()
 }
 
 function resetT() {
