@@ -895,7 +895,7 @@ function chargeMovies() {
             let movies = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result})).data)
             movies.forEach(movie => createMovie(movie.id_pelicula,movie.nombre_pelicula,movie.descripcion,movie.puntuacion_star,movie.precio_Q))
             statusMovies()
-            alert('Clientes Cargados')
+            alert('Películas Cargadas')
         }
         reader.onerror = function(evt) {alert('Ha ocurrido un error al cargar el archivo')}
     }
@@ -943,7 +943,7 @@ function chargeCategories() {
             let categories = JSON.parse(JSON.parse(JSON.stringify({data: evt.target.result})).data)
             categories.forEach(category => createCategory(category.id_categoria,category.company))
             statusCategories()
-            alert('Actores Cargados')
+            alert('Categorías Cargadas')
         }
         reader.onerror = function(evt) {alert('Ha ocurrido un error al cargar el archivo')}
     }
