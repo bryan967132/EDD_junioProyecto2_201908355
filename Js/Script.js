@@ -658,9 +658,8 @@ class Blockchain {
             this.ultimo.siguiente.anterior = this.ultimo
             this.ultimo = this.ultimo.siguiente
             this.ultimo.objeto.prev_hash = this.ultimo.anterior.objeto.hash
-            let proof = this.proofOfWork(this.ultimo.objeto,this.ultimo.anterior.objeto.nonce + 1)
+            let proof = this.proofOfWork(this.ultimo.objeto,0)
             this.ultimo.objeto.nonce = proof.nonce
-            console.log(this.ultimo.objeto.nonce)
             this.ultimo.objeto.hash = proof.hash
             return
         }
@@ -668,7 +667,6 @@ class Blockchain {
         this.primero.objeto.prev_hash = '00'
         let proof = this.proofOfWork(this.primero.objeto,0)
         this.primero.objeto.nonce = proof.nonce
-        console.log(this.primero.objeto.nonce)
         this.primero.objeto.hash = proof.hash
         this.ultimo = this.primero
     }
